@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#c2410c" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<link rel="manifest" href="manifest.json" />
+<title>PALIAPP</title>
+<style>
+  :root{
+    --bg:#f4f4f5;
+    --surface:#ffffff;
+    --ink:#18181b;
+    --muted:#3f3f46;
+    --line:#e4e4e7;
+    --soft:#f4f4f5;
+    --preview:#3f3f46;
+    --accent:#c2410c;
+    --accent-ink:#fff;
+    --ring:rgba(194,65,12,.28);
+    --shadow:0 1px 2px rgba(24,24,27,.04), 0 10px 28px rgba(24,24,27,.06);
+    --radius:16px;
+    --font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#18181b;
+      --surface:#27272a;
+      --ink:#fafafa;
+      --muted:#d4d4d8;
+      --line:#3f3f46;
+      --soft:#3f3f46;
+      --preview:#e4e4e7;
+      --accent:#fb923c;
+      --accent-ink:#18181b;
+      --ring:rgba(251,146,60,.35);
+      --shadow:0 1px 2px rgba(0,0,0,.35), 0 12px 32px rgba(0,0,0,.28);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+  button,input,select,textarea{font:inherit;color:inherit}
+  button{cursor:pointer}
+  header.app{
+    position:sticky;top:0;z-index:30;
+    background:color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter:blur(16px);
+    box-shadow:0 1px 0 var(--line);
+    display:flex;align-items:center;gap:12px;padding:12px 16px;
+  }
+  .logo{width:40px;height:40px;border-radius:12px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700;font-size:14px;letter-spacing:-.03em;flex:0 0 auto}
+  header h1{margin:0;font-size:1.25rem;font-weight:700;letter-spacing:-.03em;line-height:1.2}
+  header p{margin:2px 0 0;color:var(--muted);font-size:.8125rem;font-weight:400}
+  .grow{flex:1}
+  .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{
+    border:0;background:var(--soft);color:var(--ink);border-radius:12px;
+    padding:0 14px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;
+    font-weight:600;font-size:.9375rem;white-space:nowrap;
+    transition:background .15s ease, transform .12s ease;
+  }
+  .btn:hover{background:color-mix(in srgb, var(--ink) 8%, var(--soft))}
+  .btn:active{transform:scale(.98)}
+  .btn:focus-visible,.short:focus-visible,.mod:focus-visible,.scale-toggle:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+    outline:none;box-shadow:0 0 0 3px var(--ring);
+  }
+  .btn-primary{background:var(--accent);color:var(--accent-ink)}
+  .btn-primary:hover{background:color-mix(in srgb, var(--accent) 88%, #000)}
+  .wrap{max-width:980px;margin:0 auto;padding:16px 16px 140px}
+  .card{background:var(--surface);border:0;border-radius:var(--radius);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
+  h2{margin:0 0 6px;font-size:1.25rem;font-weight:700;letter-spacing:-.03em;line-height:1.25}
+  h3{margin:0 0 4px;font-size:1rem;font-weight:600;letter-spacing:-.02em}
+  .kicker{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .muted{color:var(--muted);font-weight:400}
+  .plate{display:grid;grid-template-columns:1fr;gap:14px;align-items:center}
+  .plate img{width:100%;height:168px;object-fit:cover;border-radius:14px;display:block}
+  .shortcuts{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
+  .short{
+    display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;
+    text-align:left;width:100%;min-height:72px;border:0;border-radius:14px;padding:14px 16px;
+    background:color-mix(in srgb, var(--accent) 10%, var(--surface));
+    box-shadow:none;color:var(--ink);
+  }
+  .short b{font-size:1rem;font-weight:700}
+  .short span{color:var(--muted);font-size:.8125rem;line-height:1.35;font-weight:400}
+  .short:nth-child(1){background:color-mix(in srgb, #c2410c 12%, var(--surface))}
+  .short:nth-child(2){background:color-mix(in srgb, #d97706 14%, var(--surface))}
+  .short:nth-child(3){background:color-mix(in srgb, #2563eb 12%, var(--surface))}
+  .short:nth-child(4){background:color-mix(in srgb, #7c3aed 12%, var(--surface))}
+  .short:active{transform:scale(.99)}
+  .mods{display:grid;grid-template-columns:1fr;gap:12px}
+  .mod{
+    display:flex;flex-direction:column;align-items:stretch;text-align:left;width:100%;
+    min-height:0;padding:18px 18px 16px 20px;border:0;border-radius:16px;
+    background:var(--surface);box-shadow:var(--shadow);position:relative;cursor:pointer;
+    font:inherit;color:inherit;
+  }
+  .mod:active{transform:scale(.995)}
+  .mod .bar{position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:99px}
+  .mod ul{margin:8px 0 0;padding:0 0 0 16px;color:var(--muted);font-size:.875rem;font-weight:400}
+  .mod p{margin:0}
+  .chip{display:inline-flex;align-items:center;align-self:flex-start;height:26px;margin-top:10px;border-radius:99px;padding:0 10px;background:var(--soft);color:var(--ink);font-size:.75rem;font-weight:600}
+  .mod.done{box-shadow:0 0 0 2px var(--accent), var(--shadow)}
+  .meter{height:4px;background:var(--soft);border-radius:99px;margin-top:12px;overflow:hidden}
+  .meter i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .25s ease}
+  .scale{border:0;border-radius:14px;margin:10px 0;overflow:hidden;background:var(--soft)}
+  .scale>header,.scale-toggle{
+    padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;
+    cursor:pointer;background:transparent;width:100%;border:0;font:inherit;color:inherit;text-align:left;min-height:56px;
+  }
+  .scale-toggle b,.scale>header b{font-weight:700;font-size:1rem}
+  .scale>header:hover,.scale-toggle:hover{background:color-mix(in srgb, var(--ink) 4%, transparent)}
+  .scale .hint{display:block;font-size:.8125rem;font-weight:400;color:var(--muted)}
+  .scale .body{padding:0 16px;max-height:0;overflow:hidden;border-top:1px solid transparent;transition:max-height .28s ease, padding .28s ease}
+  .scale.open{background:var(--surface);box-shadow:var(--shadow)}
+  .scale.open .body{display:block;max-height:4200px;padding:8px 16px 16px;border-top-color:var(--line)}
+  footer.sticky{
+    position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb, var(--surface) 92%, transparent);
+    backdrop-filter:blur(16px);box-shadow:0 -1px 0 var(--line);
+    display:flex;gap:8px;align-items:flex-end;
+    padding:8px 12px calc(10px + env(safe-area-inset-bottom));z-index:30;
+  }
+  footer.sticky .preview{flex:1;min-width:0;font-size:.875rem;color:var(--preview);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:12px 4px;font-weight:400}
+  footer.sticky.open{align-items:stretch;flex-wrap:wrap}
+  footer.sticky.open .preview{white-space:pre-wrap;overflow:auto;max-height:38vh;flex-basis:100%;order:2}
+  .dock-expand,.thumb{min-height:48px}
+  .thumb{min-width:108px}
+  .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 16px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:40}
+  .toast.on{opacity:1}
+  .sec-copy{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+  .plate-frame{position:relative;min-height:168px;border-radius:14px;overflow:hidden;background:var(--soft)}
+  .plate-fallback{display:none;min-height:168px;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--muted);background:color-mix(in srgb, var(--accent) 10%, var(--surface))}
+  .plate-frame.failed img{display:none}
+  .plate-frame.failed .plate-fallback{display:flex}
+  .opt{
+    display:flex;flex-direction:row;gap:12px;align-items:center;
+    padding:12px 14px;border:0;border-radius:12px;margin:6px 0;min-height:48px;
+    background:var(--soft);cursor:pointer;font-weight:400;
+  }
+  .opt input{margin:0;flex:0 0 auto}
+  .opt:has(input:checked){background:color-mix(in srgb, var(--accent) 14%, var(--surface));box-shadow:inset 0 0 0 1.5px var(--accent)}
+  .grid2{display:grid;grid-template-columns:1fr;gap:8px 12px;align-items:center;margin:6px 0}
+  .grid2>span{min-height:44px;display:flex;align-items:center;font-weight:500}
+  .scorebox{background:color-mix(in srgb, var(--accent) 10%, var(--surface));border-radius:12px;padding:12px 14px;margin-top:12px;font-weight:600}
+  .hidden{display:none !important}
+  input,select,textarea{
+    border:0;border-radius:12px;padding:12px 14px;background:var(--soft);width:100%;min-height:48px;
+    transition:box-shadow .15s ease, background .15s ease;
+  }
+  textarea{min-height:96px;resize:vertical;line-height:1.45}
+  input:focus,select:focus,textarea:focus{outline:none;background:var(--surface);box-shadow:0 0 0 3px var(--ring)}
+  input[type=checkbox],input[type=radio]{width:1.15rem;height:1.15rem;min-height:1.15rem;padding:0;accent-color:var(--accent);box-shadow:none;background:transparent}
+  input[type=range]{width:100%;min-height:44px;padding:0;background:transparent;box-shadow:none;accent-color:var(--accent)}
+  input[type=file]{background:transparent;box-shadow:none;padding:0}
+  label{display:flex;flex-direction:column;gap:6px;margin:10px 0;font-size:.875rem;font-weight:600;color:var(--ink)}
+  label.opt{font-weight:400;font-size:1rem}
+  .esas{display:grid;grid-template-columns:1fr;gap:6px;align-items:center;margin:10px 0}
+  .esas b{font-weight:700;font-variant-numeric:tabular-nums}
+  .src{font-size:.8125rem;font-weight:400;color:var(--muted);background:var(--soft);border-radius:12px;padding:10px 12px;margin-top:12px}
+  .warnbox{background:color-mix(in srgb, #d97706 16%, var(--surface));color:#78350f;border-radius:12px;padding:12px 14px;margin:8px 0;font-size:.9375rem}
+  .okbox{background:color-mix(in srgb, #16a34a 14%, var(--surface));color:#14532d;border-radius:12px;padding:12px 14px;margin:8px 0}
+  .badbox{background:color-mix(in srgb, #dc2626 12%, var(--surface));color:#7f1d1d;border-radius:12px;padding:12px 14px;margin:8px 0}
+  pre.report{white-space:pre-wrap;background:var(--soft);border:0;border-radius:12px;padding:16px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.875rem;line-height:1.55}
+  .empty{border:0;border-radius:14px;padding:22px;background:var(--soft);color:var(--muted)}
+  .navback{margin-bottom:12px}
+  details summary{cursor:pointer;color:var(--accent);font-weight:600}
+  @media (max-width:719px){
+    header.app{flex-wrap:wrap;align-items:center}
+    header.app .grow{display:none}
+    header.app .actions{width:100%}
+    header.app .actions .btn{flex:1 1 0;padding:0 8px;font-size:.8125rem}
+  }
+    .shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .mods{grid-template-columns:1fr 1fr}
+    .plate{grid-template-columns:240px 1fr}
+    .grid2{grid-template-columns:minmax(0,1fr) minmax(160px,240px)}
+    .esas{grid-template-columns:148px minmax(0,1fr) 28px}
+    .esas b{text-align:right}
+  }
+  @media (min-width:980px){
+    .shortcuts{grid-template-columns:repeat(4,minmax(0,1fr))}
+  }
+  @media (prefers-color-scheme: dark){
+    .warnbox{color:#fde68a}
+    .okbox{color:#bbf7d0}
+    .badbox{color:#fecaca}
+    .btn-primary:hover{background:color-mix(in srgb, var(--accent) 86%, #fff)}
+  }
+</style>
+</head>
+<body>
+<header class="app">
+  <div class="logo">Pa</div>
+  <div>
+    <h1>PALIAPP</h1>
+    <p>Consulta en vivo · texto listo para pegar en la historia clínica</p>
+  </div>
+  <div class="grow"></div>
+  <div class="actions">
+  <button class="btn" onclick="show('sources')">Fuentes</button>
+  <button class="btn" onclick="clearAll()">Limpiar visita</button>
+  <button class="btn btn-primary" onclick="showReport()">Texto para HC</button>
+  </div>
+</header>
+<div class="wrap" id="view-home">
+  <div class="card" id="meta-card"></div>
+  <div class="card">
+    <figure class="plate">
+      <div class="plate-frame" id="plate-frame">
+        <img id="plate-img" src="laminas/bandeja.jpg" alt="Lámina de situación, no un retrato del paciente" onerror="plateFail()">
+        <div class="plate-fallback" aria-hidden="true">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true"><rect x="4" y="6" width="28" height="22" rx="3" stroke="#b86b62" stroke-width="1.6"/><path d="M8 22l6-6 4 4 3-3 7 7" stroke="#8eabc4" stroke-width="1.6" stroke-linejoin="round"/><circle cx="13" cy="13" r="2" fill="#e7b7b0"/></svg>
+          <span>Lámina no disponible</span>
+        </div>
+      </div>
+      <figcaption>
+        <h2>Lámina de la situación</h2>
+        <p id="plate-cap" class="muted" style="margin:0">No es el paciente. Es una viñeta de manual, y cambia con el PPS o la fase. Mientras no haya datos, queda la bandeja.</p>
+      </figcaption>
+    </figure>
+  </div>
+  <div class="card">
+    <h2>¿Qué visita es esta?</h2>
+    <p class="muted" style="margin:0 0 8px">Un atajo abre solo lo que suele hacer falta. El resto queda disponible.</p>
+    <div class="shortcuts">
+      <button class="short" onclick="openVisit('primera')"><b>Primera vez</b><span>NECPAL, PPS, Barthel, ESAS, fase</span></button>
+      <button class="short" onclick="openVisit('control')"><b>Control</b><span>ESAS, fase y lo que cambió</span></button>
+      <button class="short" onclick="openVisit('delirium')"><b>Delirium</b><span>RASS, CAM y MDAS si positivo</span></button>
+      <button class="short" onclick="openVisit('techo')"><b>Techo terapéutico</b><span>PPS, PaP o PPI, planificación</span></button>
+    </div>
+  </div>
+  <div class="mods" id="modgrid"></div>
+  <div class="card" id="saved-card"></div>
+</div>
+<div class="wrap hidden" id="view-mod"></div>
+<div class="wrap hidden" id="view-report"></div>
+<div class="wrap hidden" id="view-sources"></div>
+<footer class="sticky" id="dock">
+  <button type="button" class="btn dock-expand" id="dock-btn" aria-expanded="false" onclick="toggleDock()">Ver</button>
+  <div class="preview" id="live">Todavía no hay texto. Completá una escala.</div>
+  <button class="btn btn-primary thumb" onclick="copyReport()">Copiar</button>
+</footer>
+<div class="toast" id="toast">Copiado</div>
+<script>
+const VISITS = {
+  primera: ['necpal','pps','barthel','esas','fase'],
+  control: ['esas','fase'],
+  delirium: ['rass','cam','mdas'],
+  techo: ['pps','pap','ppi','plan']
+};
+const MODS = [
+  {id:'need', title:'Necesidades', color:'#c9847a', tools:['necpal','spict','hexcom'], blurb:'¿Hace falta un enfoque paliativo, y qué tan complejo es?'},
+  {id:'func', title:'Funcionalidad', color:'#8eabc4', tools:['pps','ecog','kps','barthel','lawton','katz'], blurb:'PPS se reutiliza en el PPI. Karnofsky, en el PaP.'},
+  {id:'prog', title:'Pronóstico y fase', color:'#d2a36a', tools:['fase','ppi','pap'], blurb:'Fase de enfermedad, PPI y PaP. Sin laboratorios no hay PaP.'},
+  {id:'sym', title:'Síntomas de hoy', color:'#c47d8a', tools:['esas','dolor','rass'], blurb:'Lo que se mira en cada visita, no solo en la primera.'},
+  {id:'cog', title:'Cognición', color:'#b7a4c8', tools:['cam','mdas','mmse','gds'], blurb:'CAM para cribado. MDAS si hay delirium. GDS si hay demencia.'},
+  {id:'care', title:'Cuidador', color:'#c49a7c', tools:['zarit'], blurb:'Carga. En domicilio cambia la conducta más que otra escala.'},
+  {id:'plan', title:'Planificación', color:'#8eabc4', tools:['plan'], blurb:'Representante, lugar de muerte, reanimación. Párrafo para pegar.'},
+  {id:'opio', title:'Opioides', color:'#d2a36a', tools:['opio'], blurb:'Rotación breve. La calculadora completa abre aparte.'},
+  {id:'dep', title:'Desprescripción', color:'#b7a4c8', tools:['dep'], blurb:'Apartado reservado. Todavía sin instrumento.'}
+];
+const NAMES = {
+  necpal:'NECPAL 4.0', spict:'SPICT', hexcom:'HexCom-Clin', pps:'PPS', ecog:'ECOG', kps:'Karnofsky',
+  barthel:'Barthel', lawton:'Lawton', katz:'Katz', fase:'Fase', ppi:'PPI', pap:'PaP',
+  esas:'ESAS-r', dolor:'Dolor', rass:'RASS', cam:'CAM', mdas:'MDAS', mmse:'Mini-Mental', gds:'GDS',
+  zarit:'Zarit breve', plan:'Planificación', opio:'Opioides', dep:'Desprescripción'
+};
+const state = load();
+function load(){ try { return JSON.parse(localStorage.getItem('cpdesk')||'{}'); } catch(e){ return {}; } }
+function persist(){ localStorage.setItem('cpdesk', JSON.stringify(state)); paintLive(); }
+function $(id){ return document.getElementById(id); }
+function show(which){
+  ['home','mod','report','sources'].forEach(k=>$('view-'+k).classList.toggle('hidden', k!==which));
+  if(which==='home') renderHome();
+  if(which==='sources') renderSources();
+  window.scrollTo(0,0);
+}
+const SECTIONS = [
+  {id:'need', title:'Necesidades', ids:['necpal','spict','hexcom']},
+  {id:'func', title:'Función', ids:['pps','ecog','kps','barthel','lawton','katz']},
+  {id:'prog', title:'Pronóstico', ids:['fase','ppi','pap']},
+  {id:'sym', title:'Síntomas', ids:['esas','dolor','rass']},
+  {id:'cog', title:'Cognición', ids:['cam','mdas','mmse','gds']},
+  {id:'care', title:'Cuidador', ids:['zarit']},
+  {id:'plan', title:'Planificación', ids:['plan']},
+  {id:'opio', title:'Opioides', ids:['opio']}
+];
+function loadMeta(){ try { return JSON.parse(localStorage.getItem('cpdesk-meta')||'{}'); } catch(e){ return {}; } }
+function saveMeta(m){ localStorage.setItem('cpdesk-meta', JSON.stringify(m)); }
+function loadSaved(){ try { return JSON.parse(localStorage.getItem('cpdesk-visitas')||'[]'); } catch(e){ return []; } }
+function saveSaved(list){ localStorage.setItem('cpdesk-visitas', JSON.stringify(list)); }
+function sectionText(ids){
+  const parts = ids.map(id=> state[id] ? interpret(id, state[id]) : '').filter(Boolean);
+  const meta = loadMeta();
+  if(ids[0]==='necpal' && meta.includeWhen && meta.when) parts.unshift('Visita: '+meta.when.replace('T',' ')+'.');
+  return parts.join(' ');
+}
+function warnings(){
+  const w = [];
+  const pap = state.pap;
+  if(pap && (!state.kps && !pap.kps || !pap.wbc || !pap.lin)) w.push('PaP sin Karnofsky o sin laboratorios: no calcula hasta que estén.');
+  if(state.cam && state.cam.c0 && state.cam.c1 && (state.cam.c2 || state.cam.c3) && !state.mdas) w.push('CAM positivo. Si podés, completá el MDAS.');
+  if(state.ppi && !state.pps && !state.ppi.pps) w.push('PPI sin PPS. Cargalo en Funcionalidad o en la misma escala.');
+  return w;
+}
+function renderWarnings(){
+  let box = document.getElementById('warn-card');
+  if(!box){
+    box = document.createElement('div');
+    box.id = 'warn-card';
+    $('modgrid')?.before(box);
+  }
+  const w = warnings();
+  box.innerHTML = w.length ? w.map(t=>`<div class="warnbox">${esc(t)}</div>`).join('') : '';
+}
+function renderMeta(){
+  const m = loadMeta();
+  const when = m.when || new Date().toISOString().slice(0,16);
+  $('meta-card').innerHTML = `<p class="kicker">Esta visita</p>
+    <div class="grid2">
+      <label>Fecha y hora<input id="meta-when" type="datetime-local" value="${esc(when)}"></label>
+      <label>Identificador local<input id="meta-id" placeholder="cama, iniciales, no va al texto" value="${esc(m.localId||'')}"></label>
+    </div>
+    <label class="opt"><input id="meta-inc" type="checkbox" ${m.includeWhen?'checked':''}> Incluir fecha y hora en el texto</label>
+    <div class="actions">
+      <button type="button" class="btn" onclick="guardarVisita()">Guardar visita</button>
+      <button type="button" class="btn" onclick="exportar()">Exportar JSON</button>
+      <button type="button" class="btn" onclick="$('import-file').click()">Importar JSON</button>
+      <input id="import-file" type="file" accept="application/json" class="hidden" onchange="importar(this)">
+    </div>`;
+  $('meta-card').querySelectorAll('input').forEach(n=>n.addEventListener('change', persistMeta));
+}
+function persistMeta(){
+  saveMeta({
+    when: $('meta-when')?.value || '',
+    localId: $('meta-id')?.value || '',
+    includeWhen: !!$('meta-inc')?.checked
+  });
+}
+function guardarVisita(){
+  persistMeta();
+  const meta = loadMeta();
+  const list = loadSaved();
+  list.unshift({ id: Date.now(), when: meta.when, localId: meta.localId, data: JSON.parse(JSON.stringify(state)) });
+  saveSaved(list.slice(0,30));
+  toast('Visita guardada');
+  renderSaved();
+}
+function renderSaved(){
+  const list = loadSaved();
+  $('saved-card').innerHTML = `<p class="kicker">Visitas en este celular</p>
+    ${list.length? list.map(v=>`<div class="sec-copy"><span>${esc(v.localId||'Sin identificador')} · ${esc((v.when||'').replace('T',' '))}</span>
+      <span class="actions"><button type="button" class="btn" onclick="reabrir(${v.id})">Reabrir</button>
+      <button type="button" class="btn" onclick="duplicar(${v.id})">Duplicar</button></span></div>`).join('') : '<p class="muted">Todavía no hay visitas guardadas.</p>'}`;
+}
+function reabrir(id){
+  const v = loadSaved().find(x=>x.id===id);
+  if(!v) return;
+  Object.keys(state).forEach(k=>delete state[k]);
+  Object.assign(state, v.data||{});
+  persist();
+  show('home');
+  toast('Visita reabierta');
+}
+function duplicar(id){
+  const v = loadSaved().find(x=>x.id===id);
+  if(!v) return;
+  Object.keys(state).forEach(k=>delete state[k]);
+  Object.assign(state, v.data||{});
+  persist();
+  show('home');
+  toast('Copia lista para el control');
+}
+function exportar(){
+  persistMeta();
+  const blob = new Blob([JSON.stringify({ version:1, state, meta: loadMeta(), visitas: loadSaved() }, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'paliapp-visitas.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importar(input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try {
+      const data = JSON.parse(reader.result);
+      if(!data || !data.state) throw new Error('sin state');
+      if(!confirm('Esto reemplaza la visita abierta y la lista guardada de este celular.')) return;
+      Object.keys(state).forEach(k=>delete state[k]);
+      Object.assign(state, data.state);
+      persist();
+      if(data.meta) saveMeta(data.meta);
+      if(Array.isArray(data.visitas)) saveSaved(data.visitas);
+      show('home');
+      toast('Importado');
+    } catch(e){ toast('Ese JSON no sirve'); }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+function renderHome(){
+  $('modgrid').innerHTML = MODS.map(m=>{
+    const tools = m.tools.filter(t=>t!=='dep');
+    const done = tools.filter(t=>state[t]).length;
+    const full = tools.length && done===tools.length;
+    return `<button type="button" class="mod${full?' done':''}" onclick="openMod('${m.id}')">
+      <div class="bar" style="background:${m.color}"></div>
+      <h3>${m.title}</h3>
+      <p class="muted" style="margin:0">${m.blurb}</p>
+      <ul>${m.tools.map(t=>`<li>${NAMES[t]}</li>`).join('')}</ul>
+      <div class="meter" aria-hidden="true"><i style="width:${tools.length? Math.round(done/tools.length*100):0}%"></i></div>
+      <span class="chip">${full?'completa': done+'/'+tools.length}</span>
+    </button>`;
+  }).join('');
+  renderMeta();
+  renderSaved();
+  renderWarnings();
+}
+function openVisit(kind){ state.visit = kind; persist(); openMod(null, VISITS[kind]); }
+function openMod(modId, only){
+  const tools = only || MODS.find(m=>m.id===modId).tools;
+  const title = only ? ({primera:'Primera vez',control:'Control',delirium:'Delirium',techo:'Techo terapéutico'}[state.visit]) : MODS.find(m=>m.id===modId).title;
+  show('mod');
+  $('view-mod').innerHTML = `<button class="btn navback" onclick="show('home')">← PALIAPP</button>
+    <div class="card"><h2>${title}</h2><p class="muted" style="margin:0">Solo entra al texto lo que completes. ${only?'Atajo de visita.':''}</p></div>
+    ${tools.map(t=>toolCard(t)).join('')}`;
+  tools.forEach(bind);
+  tools.forEach(t=>{
+    if(!only) return;
+    const sec = document.getElementById('sc-'+t);
+    sec?.classList.add('open');
+    sec?.querySelector('.scale-toggle')?.setAttribute('aria-expanded','true');
+  });
+}
+function toggleScale(btn){
+  const sec = btn.closest('.scale');
+  const open = sec.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+function toolCard(id){
+  return `<section class="scale" id="sc-${id}"><h3 class="scale-h"><button type="button" class="scale-toggle" aria-expanded="false" aria-controls="bd-${id}" onclick="toggleScale(this)"><span><b>${NAMES[id]}</b><span class="muted hint">${hint(id)}</span></span><span class="chip" id="st-${id}">${state[id]?'con datos':'abrir'}</span></button></h3><div class="body" id="bd-${id}"></div></section>`;
+}
+function hint(id){
+  return ({
+    necpal:'Pregunta sorpresa y parámetros. Estadio si es positivo.',
+    spict:'≥2 generales y ≥1 específico.',
+    hexcom:'18 subáreas. El global es el máximo.',
+    pps:'10–100. Se ofrece al PPI.',
+    ecog:'0 a 4 en vida. 5 no se usa en consulta.',
+    kps:'0–100. Se ofrece al PaP.',
+    barthel:'10 ABVD. 0–100.',
+    lawton:'8 AIVD.',
+    katz:'6 ABVD. A independencia, G dependencia.',
+    fase:'Estable, inestable, deterioro, terminal.',
+    ppi:'Usa PPS si ya está. Sin ítems no calcula.',
+    pap:'Karnofsky y labs obligatorios.',
+    esas:'0 a 10, ahora.',
+    dolor:'Intensidad y componente neuropático.',
+    rass:'+4 a −5.',
+    cam:'Delirium si 1 y 2, más 3 o 4.',
+    mdas:'0–30. Corte ≥7.',
+    mmse:'30 puntos por dominios, para cargar en vivo.',
+    gds:'Estadio 1 a 7.',
+    zarit:'12 ítems. Corte orientativo ≥17.',
+    plan:'Párrafo de acuerdos, no una escala.',
+    opio:'Estimación. La calculadora completa está enlazada.',
+    dep:'Reservado.'
+  })[id]||'';
+}
+function bind(id){
+  const el = $('bd-'+id);
+  el.innerHTML = forms[id]();
+  restore(id);
+  el.querySelectorAll('input,select,textarea').forEach(n=>n.addEventListener('input', ()=>collect(id)));
+  collect(id, true);
+}
+function field(id, label, type, extra=''){
+  const v = (state[id] && state[id][extra||label]) || '';
+  return `<label class="muted" style="font-size:12px">${label}<input data-k="${extra||label}" ${type} value="${esc(v)}"></label>`;
+}
+function esc(s){
+  return String(s??'').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"').replace(/'/g,'&#39;');
+}
+const forms = {
+  necpal(){ return `
+    <label class="opt"><span>¿Te sorprendería que este paciente muriera en los próximos 12 meses?</span></label>
+    <label class="opt"><input type="radio" name="sq" value="si"> No me sorprendería (pregunta positiva)</label>
+    <label class="opt"><input type="radio" name="sq" value="no"> Sí me sorprendería</label>
+    ${['Caída del Barthel >30% en 6 meses','Pérdida de peso >10% en 6 meses','≥2 enfermedades crónicas avanzadas','≥2 ingresos urgentes en 12 meses','Uso de recursos complejo o refractariedad','Deterioro funcional, nutricional o cognitivo marcado'].map((t,i)=>`<label class="opt"><input type="checkbox" data-k="p${i}"> ${t}</label>`).join('')}
+    <div class="src">Gómez-Batiste y cols. NECPAL 4.0. Redacción alineada al material INC/MSAL, módulo 1.</div>`; },
+  spict(){ return `
+    <b>Generales</b>
+    ${['Deterioro funcional','Dependencia creciente','Dos o más internaciones no programadas','Bajo peso o pérdida de peso','Persona solicita cuidados paliativos o limita tratamiento'].map((t,i)=>`<label class="opt"><input type="checkbox" data-k="g${i}"> ${t}</label>`).join('')}
+    <b>Específicos</b>
+    ${['Cáncer metastásico o incurable con deterioro','Enfermedad pulmonar o cardíaca avanzada','Demencia o fragilidad con dependencia','Enfermedad renal, hepática o neurológica en etapa avanzada'].map((t,i)=>`<label class="opt"><input type="checkbox" data-k="s${i}"> ${t}</label>`).join('')}
+    <div class="src">SPICT. Versión en español de uso clínico. Indicadores resumidos para la consulta; la lista completa está en el material INC.</div>`; },
+  hexcom(){
+    const items = [['Clínica','Física','Terapéutica'],['Psicológica','Personalidad','Emocional'],['Espiritual','Sentido','Conexión','Trascendencia'],['Sociofamiliar','Relacional','Emocional del cuidador','Práctica','Externa','Económica'],['Ética','Información','AET','Deseo de anticipar la muerte'],['Muerte','Ubicación','Últimos días','Duelo']];
+    return items.map(([area,...subs])=>`<div style="margin:8px 0"><b>${area}</b>${subs.map(s=>`<div class="grid2" style="margin-top:6px"><span>${s}</span><select data-k="${area}-${s}"><option value="">No evaluada</option><option>Baja</option><option>Media</option><option>Alta</option></select></div>`).join('')}</div>`).join('') + `<div class="src">HexCom-Clin® 2018, 18 subáreas. Busquet-Duran. Anexo 4 INC. El área y el global toman el máximo.</div>`;
+  },
+  pps(){ return [100,90,80,70,60,50,40,30,20,10].map(n=>`<label class="opt"><input type="radio" name="pps" value="${n}"> <b>${n}%</b> ${ppsTxt(n)}</label>`).join('') + `<div class="src">Palliative Performance Scale. Victoria Hospice. Descriptores resumidos, no la tabla oficial completa.</div>`; },
+  ecog(){ return [0,1,2,3,4].map(n=>`<label class="opt"><input type="radio" name="ecog" value="${n}"> <b>ECOG ${n}.</b> ${['Asintomático','Sintomático, ambulatorio','En cama <50% del día','En cama >50% del día','Encamado, dependiente'][n]}</label>`).join('') + `<div class="src">Oken 1982. Redacción clínica: Anexo 8 INC.</div>`; },
+  kps(){ return `<select data-k="kps"><option value="">Elegir Karnofsky</option>${[100,90,80,70,60,50,40,30,20,10,0].map(n=>`<option value="${n}">${n}% · ${kpsTxt(n)}</option>`).join('')}</select><div class="src">Karnofsky 1949. Anexo 7 INC. Se reutiliza en PaP.</div>`; },
+  barthel(){ return barthelItems().map(([k,t,opts])=>`<div style="margin:8px 0"><b>${t}</b>${opts.map(([v,l])=>`<label class="opt"><input type="radio" name="${k}" value="${v}"> ${l} (${v})</label>`).join('')}</div>`).join('') + `<div class="src">Mahoney y Barthel, 1965. Cortes INC: <20 total, 21–60 severa, 61–90 moderada, 91–99 leve, 100 independiente.</div>`; },
+  lawton(){ return ['Teléfono','Compras','Comida','Casa','Ropa','Transporte','Medicación','Dinero'].map(t=>`<label class="opt"><input type="checkbox" data-k="${t}"> Independiente: ${t}</label>`).join('') + `<div class="src">Lawton y Brody, 1969. 0–8. No está en el PDF del módulo 1.</div>`; },
+  katz(){ return ['Baño','Vestido','Baño/WC','Transferencia','Continencia','Alimentación'].map(t=>`<label class="opt"><input type="checkbox" data-k="${t}"> Independiente: ${t}</label>`).join('') + `<div class="src">Katz, 1963. Índice A–G según actividades perdidas.</div>`; },
+  fase(){ return [['estable','Estable: síntomas controlados, plan vigente.'],['inestable','Inestable: problema nuevo que exige cambio hoy.'],['deterioro','En deterioro: declive gradual, plan se va ajustando.'],['terminal','Terminal: muerte esperable en días.']].map(([v,t])=>`<label class="opt"><input type="radio" name="fase" value="${v}"> ${t}</label>`).join('') + `<div class="src">Fase de enfermedad, adaptación de Palliative Care Phase (Eagar y cols.). No incluye duelo: esta herramienta es de visita con el paciente.</div>`; },
+  ppi(){ return `
+    <p class="muted">Si ya cargaste PPS, se usa solo. Si no, elegilo acá.</p>
+    <select data-k="pps"><option value="">PPS</option>${[10,20,30,40,50,60,70,80,90,100].map(n=>`<option value="${n}">${n}%</option>`).join('')}</select>
+    <select data-k="ingesta" style="margin-top:8px"><option value="">Ingesta oral</option><option value="0">Normal</option><option value="1">Reducida</option><option value="2.5">Bocados o menos</option></select>
+    <label class="opt"><input type="checkbox" data-k="edema"> Edema</label>
+    <label class="opt"><input type="checkbox" data-k="disnea"> Disnea de reposo</label>
+    <label class="opt"><input type="checkbox" data-k="delirium"> Delirium</label>
+    <div class="src">Morita y cols., 1999. ≤4 mayor a 6 semanas; 4,1–6 intermedio; >6 menor a 3 semanas. El PPS del escritorio pisa este selector.</div>`; },
+  pap(){ return `
+    <label class="opt"><input type="checkbox" data-k="disnea"> Disnea</label>
+    <label class="opt"><input type="checkbox" data-k="anorexia"> Anorexia</label>
+    <select data-k="kps"><option value="">Karnofsky</option>${[10,20,30,40,50,60,70,80,90,100].map(n=>`<option>${n}</option>`).join('')}</select>
+    <div class="grid2" style="margin-top:8px"><label>Leucocitos ×10⁹/L<input data-k="wbc" inputmode="decimal" placeholder="obligatorio"></label><label>% linfocitos<input data-k="lin" inputmode="decimal" placeholder="obligatorio"></label></div>
+    <select data-k="cps" style="margin-top:8px"><option value="">Predicción clínica de supervivencia</option>
+      <option value="0">Más de 12 semanas</option><option value="2">11–12 semanas</option><option value="2.5">7–10 semanas</option>
+      <option value="4.5">5–6 semanas</option><option value="6">3–4 semanas</option><option value="8.5">1–2 semanas</option></select>
+    <div class="src">Maltoni / Pirovano, 1999. Sin leucocitos o linfocitos no calcula. No usar en hemopatías.</div>`; },
+  esas(){ return ['Dolor','Cansancio','Náuseas','Depresión','Ansiedad','Somnolencia','Apetito','Malestar','Falta de aire','Otro'].map(s=>`<div class="esas"><span>${s}</span><input type="range" min="0" max="10" value="0" data-k="${s}"><b>0</b></div>`).join('') + `<input data-k="otrotxt" placeholder="Si marcaste Otro, ¿cuál?" style="margin-top:8px"><div class="src">ESAS-r. Edmonton. 0 nada, 10 lo peor posible. Apetito: 0 mejor, 10 peor.</div>`; },
+  dolor(){ return `
+    <div class="esas"><span>Intensidad ahora</span><input type="range" min="0" max="10" value="0" data-k="nrs"><b>0</b></div>
+    <b>Componente neuropático (entrevista)</b>
+    ${['Quemazón','Frío doloroso','Descargas','Hormigueo','Pinchazos','Adormecimiento','Picazón'].map(t=>`<label class="opt"><input type="checkbox" data-k="${t}"> ${t}</label>`).join('')}
+    <div class="src">Intensidad numérica. DN4, porción de entrevista (Bouhassira 2005): ≥3 de 7 sugiere componente neuropático. No reemplaza el examen.</div>`; },
+  rass(){ return [['4','Combativo'],['3','Muy agitado'],['2','Agitado'],['1','Inquieto'],['0','Alerta y tranquilo'],['-1','Somnoliento'],['-2','Sedación leve'],['-3','Sedación moderada'],['-4','Sedación profunda'],['-5','No despertable']].map(([v,t])=>`<label class="opt"><input type="radio" name="rass" value="${v}"> <b>${v}</b> ${t}</label>`).join('') + `<div class="src">Richmond Agitation-Sedation Scale. Sessler 2002.</div>`; },
+  cam(){ return ['Inicio agudo o curso fluctuante','Inatención','Pensamiento desorganizado','Conciencia distinta de alerta'].map((t,i)=>`<label class="opt"><input type="checkbox" data-k="c${i}"> <b>${i+1}.</b> ${t}</label>`).join('') + `<div class="src">Inouye, 1990. Anexo 14 INC. Positivo si 1 y 2, más 3 o 4.</div>`; },
+  mdas(){ return ['Conciencia','Orientación','Memoria breve','Series','Atención','Pensamiento','Percepción','Ideación','Psicomotricidad','Sueño'].map(t=>`<div class="grid2"><span>${t}</span><select data-k="${t}"><option value="">—</option><option value="0">0</option><option value="1">1 leve</option><option value="2">2 moderado</option><option value="3">3 grave</option></select></div>`).join('') + `<div class="src">Memorial Delirium Assessment Scale. Anexo 13 INC. Corte diagnóstico del material: ≥7.</div>`; },
+  mmse(){ return [['Orientación',10],['Registro',3],['Atención',5],['Recuerdo',3],['Lenguaje y praxia',9]].map(([t,m])=>`<label>${t} (0–${m})<input data-k="${t}" inputmode="numeric" placeholder="0–${m}"></label>`).join('') + `<label>Años de escolaridad<input data-k="esc" inputmode="numeric"></label><div class="src">Folstein 1975. Carga por dominio para usarla en vivo; el formulario licenciado sigue siendo el oficial. Cortes habituales 24–30 / 19–23 / 10–18 / ≤9, ajustar por escolaridad.</div>`; },
+  gds(){ return [1,2,3,4,5,6,7].map(n=>`<label class="opt"><input type="radio" name="gds" value="${n}"> <b>GDS ${n}.</b> ${['','Normalidad','Queja subjetiva','Déficit observable','Demencia leve','Demencia moderada','Demencia moderada-severa','Demencia grave'][n]}</label>`).join('') + `<div class="src">Reisberg 1982. Anexo 11 INC.</div>`; },
+  zarit(){ return ['Pide más ayuda de la que necesita','No alcanza el tiempo','Estrés al convivir con el cuidado','Vergüenza o enojo','Impacto en otras relaciones','Miedo por el futuro','Dependencia total de usted','Salud propia resentida','Pérdida de control de la vida','Desear poder delegar','Inseguridad sobre qué hacer','Sensación de que debería hacer más'].map(t=>`<div class="grid2"><span>${t}</span><select data-k="${t}"><option value="">—</option><option value="0">Nunca</option><option value="1">Rara vez</option><option value="2">A veces</option><option value="3">Frecuente</option><option value="4">Casi siempre</option></select></div>`).join('') + `<div class="src">Zarit Burden Interview, forma breve de 12 ítems (Bédard 2001). Ítems parafraseados. Corte orientativo de carga alta ≥17.</div>`; },
+  plan(){ return `
+    <label>Representante<input data-k="rep" placeholder="nombre y vínculo, si se consignó"></label>
+    <label>Lugar deseado de muerte<input data-k="lugar" placeholder="domicilio, hospice, hospital, no hablado"></label>
+    <label>Reanimación<input data-k="rcp" placeholder="no hablado / desea / no desea / a confirmar"></label>
+    <label>Qué quedó hablado<textarea data-k="hab" rows="3" placeholder="objetivos, techo, dudas"></textarea></label>
+    <label>Qué no se habló<textarea data-k="nohab" rows="2"></textarea></label>
+    <div class="src">No es una escala. Es el párrafo que suele faltar en la evolución.</div>`; },
+  opio(){ return `
+    <div class="warnbox">Estimación de rotación. No reemplaza la calculadora completa ni el criterio clínico. Reducción por tolerancia cruzada incompleta, por defecto 30%.</div>
+    <div class="grid2">
+      <label>Opioide actual<select data-k="from">${opioOpts()}</select></label>
+      <label>Dosis en 24 h<input data-k="dose" inputmode="decimal" placeholder="mg, o mcg/h si es parche"></label>
+      <label>Destino<select data-k="to">${opioOpts()}</select></label>
+      <label>Reducción %<input data-k="red" value="30" inputmode="numeric"></label>
+    </div>
+    <p style="margin-top:10px"><a href="https://leandroantonielli.github.io/CalculadoraOpioides/" target="_blank" rel="noopener">Abrir la calculadora completa de Antonielli</a> (rotación, metadona, indicaciones).</p>
+    <div class="src">Factores alineados a esa calculadora: morfina SC 2:1, EV 2,5:1, oxicodona 1,5:1, tramadol y codeína 10:1, fentanilo parenteral 100:1. Parches: aproximación comercial.</div>`; },
+  dep(){ return `<div class="empty"><b>Desprescripción</b><p>Apartado reservado. Cuando pases el instrumento (STOPPFrail, OncPal o una lista propia) se engancha acá y sale en el mismo texto de la historia clínica.</p></div>`; }
+};
+function opioOpts(){ return ['Morfina VO','Morfina SC','Morfina EV','Oxicodona VO','Tramadol VO','Codeína VO','Fentanilo EV mcg/día','Fentanilo TD mcg/h'].map(o=>`<option>${o}</option>`).join(''); }
+function ppsTxt(n){ return ({100:'plena actividad',90:'actividad normal con algún síntoma',80:'actividad con esfuerzo',70:'no puede trabajar, se autocuida',60:'necesita ayuda ocasional',50:'necesita ayuda considerable',40:'más en cama, ayuda mayor',30:'encamado, cuidado total',20:'moribundo, mínimo oral',10:'moribundo'})[n]||''; }
+function kpsTxt(n){ return ({100:'normal',90:'actividad normal, síntomas leves',80:'actividad con esfuerzo',70:'se autocuida, no trabaja',60:'ayuda ocasional',50:'ayuda importante',40:'incapaz, ayuda especial',30:'encamado, soporte',20:'muy grave',10:'moribundo',0:'muerto'})[n]||''; }
+function barthelItems(){ return [['alim','Alimentación',[['10','Independiente'],['5','Ayuda'],['0','Dependiente']]],['ban','Baño',[['5','Independiente'],['0','Dependiente']]],['ves','Vestido',[['10','Independiente'],['5','Ayuda'],['0','Dependiente']]],['ase','Aseo',[['5','Independiente'],['0','Dependiente']]],['dep','Deposición',[['10','Continente'],['5','Occasional'],['0','Incontinente']]],['mic','Micción',[['10','Continente'],['5','Occasional'],['0','Incontinente']]],['ret','Retrete',[['10','Independiente'],['5','Ayuda'],['0','Dependiente']]],['tra','Traslado',[['15','Independiente'],['10','Mínima ayuda'],['5','Gran ayuda'],['0','Dependiente']]],['dea','Deambulación',[['15','Independiente'],['10','Ayuda'],['5','Silla de ruedas'],['0','Dependiente']]],['esc','Escaleras',[['10','Independiente'],['5','Ayuda'],['0','Dependiente']]]]; }
+function restore(id){
+  const d = state[id] || {};
+  const root = $('bd-'+id);
+  root.querySelectorAll('[data-k]').forEach(n=>{
+    const v = d[n.dataset.k];
+    if(v==null) return;
+    if(n.type==='checkbox') n.checked = !!v;
+    else n.value = v;
+  });
+  root.querySelectorAll('input[type=radio]').forEach(n=>{ if(String(d[n.name])===n.value) n.checked = true; });
+}
+function collect(id, silent){
+  if(id==='dep') return;
+  const root = $('bd-'+id);
+  if(!root) return;
+  const d = {};
+  root.querySelectorAll('[data-k]').forEach(n=>{ d[n.dataset.k] = n.type==='checkbox' ? n.checked : n.value; });
+  root.querySelectorAll('input[type=radio]:checked').forEach(n=>{ d[n.name] = n.value; });
+  const empty = !Object.values(d).some(v=>v && v!=='0' && v!==false);
+  if(!silent){ state[id] = empty ? undefined : d; if(empty) delete state[id]; persist(); }
+  const box = root.querySelector('.scorebox') || document.createElement('div');
+  if(!root.querySelector('.scorebox')){ box.className='scorebox'; root.appendChild(box); }
+  const txt = interpret(id, d);
+  box.innerHTML = txt ? `<b>${txt}</b>` : '<span class="muted">Sin resultado todavía.</span>';
+  const st = $('st-'+id); if(st) st.textContent = txt ? 'listo' : 'abrir';
+  root.querySelectorAll('input[type=range]').forEach(n=>{ const b=n.nextElementSibling; if(b&&b.tagName==='B') b.textContent=n.value; });
+}
+function num(v){ const n = parseFloat(String(v??'').replace(',','.')); return Number.isFinite(n)?n:null; }
+function interpret(id, d){
+  if(id==='necpal'){
+    const params = Object.keys(d).filter(k=>k.startsWith('p')&&d[k]).length;
+    if(!d.sq) return '';
+    if(d.sq==='no') return 'NECPAL negativo: la pregunta sorpresa es negativa.';
+    if(!params) return 'Pregunta sorpresa positiva, sin parámetros: no alcanza NECPAL positivo.';
+    const stage = params<=2?'I, mediana publicada 38 meses':params<=4?'II, mediana publicada 17,2 meses':'III, mediana publicada 3,6 meses';
+    return `NECPAL positivo, ${params} parámetro${params>1?'s':''}, estadio ${stage}.`;
+  }
+  if(id==='spict'){
+    const g = Object.keys(d).filter(k=>k.startsWith('g')&&d[k]).length;
+    const s = Object.keys(d).filter(k=>k.startsWith('s')&&d[k]).length;
+    if(!g&&!s) return '';
+    return (g>=2&&s>=1)?`SPICT positivo (${g} generales, ${s} específicos).`:`SPICT sin criterio de identificación (${g} generales, ${s} específicos).`;
+  }
+  if(id==='hexcom'){
+    const vals = Object.entries(d).filter(([,v])=>v);
+    if(!vals.length) return '';
+    const rank = {Baja:1,Media:2,Alta:3};
+    const areas = {};
+    vals.forEach(([k,v])=>{ const a=k.split('-')[0]; if(!areas[a]||rank[v]>rank[areas[a]]) areas[a]=v; });
+    const global = Object.values(areas).sort((a,b)=>rank[b]-rank[a])[0];
+    const altas = vals.filter(([,v])=>v==='Alta').map(([k])=>k.split('-')[1]);
+    return `HexCom-Clin: complejidad ${global.toLowerCase()}.${altas.length?' Alta en '+altas.join(', ')+'.':''}`;
+  }
+  if(id==='pps') return d.pps?`PPS ${d.pps}%. ${ppsTxt(d.pps)}.`:'';
+  if(id==='ecog') return d.ecog!=null && d.ecog!==''?`ECOG ${d.ecog}.`:'';
+  if(id==='kps') return d.kps?`Karnofsky ${d.kps}%.`:'';
+  if(id==='barthel'){
+    const keys = barthelItems().map(x=>x[0]);
+    if(keys.some(k=>d[k]==null||d[k]==='')) return '';
+    const t = keys.reduce((a,k)=>a+Number(d[k]),0);
+    const band = t<20?'dependencia total':t<=60?'dependencia severa':t<=90?'dependencia moderada':t<=99?'dependencia leve':'independencia';
+    return `Barthel ${t}/100, ${band}.`;
+  }
+  if(id==='lawton'){ const n=Object.values(d).filter(Boolean).length; return n?`Lawton ${n}/8.`:''; }
+  if(id==='katz'){ const n=Object.values(d).filter(Boolean).length; const lost=6-n; return n?`Katz: independiente en ${n}/6${lost?`, dependencia en ${lost}`:''}.`:''; }
+  if(id==='fase') return d.fase?`Fase ${d.fase}.`:'';
+  if(id==='ppi'){
+    const pps = num(state.pps?.pps || d.pps);
+    if(pps==null || d.ingesta==='') return '';
+    let s = pps<=20?4:pps<=50?2.5:0;
+    s += Number(d.ingesta||0) + (d.edema?1:0) + (d.disnea?3.5:0) + (d.delirium?4:0);
+    const g = s<=4?'supervivencia esperable mayor a 6 semanas':s<=6?'pronóstico intermedio, del orden de semanas': 'supervivencia esperable menor a 3 semanas';
+    return `PPI ${s}: ${g}.`;
+  }
+  if(id==='pap'){
+    const kps = num(state.kps?.kps || d.kps);
+    const wbc = num(d.wbc), lin = num(d.lin);
+    if(kps==null || wbc==null || lin==null || d.cps==='') return d.cps||d.disnea||d.anorexia ? 'PaP incompleto: faltan Karnofsky o laboratorios.' : '';
+    let s = (d.disnea?1:0) + (d.anorexia?1.5:0) + (kps<=40?2.5:0) + Number(d.cps);
+    s += wbc<=8.5?0:wbc<=11?0.5:1.5;
+    s += lin>=20?0:lin>=12?1:2.5;
+    const g = s<=5.5?'grupo A, probabilidad de vivir 30 días mayor al 70%':s<=11?'grupo B, probabilidad intermedia':'grupo C, probabilidad de vivir 30 días menor al 30%';
+    return `PaP ${s.toFixed(1).replace('.',',')}, ${g}.`;
+  }
+  if(id==='esas'){
+    const hits = Object.entries(d).filter(([k,v])=>k!=='otrotxt' && num(v)>=4);
+    if(!hits.length && !Object.values(d).some(v=>num(v)>0)) return '';
+    const top = Object.entries(d).filter(([k])=>k!=='otrotxt').sort((a,b)=>num(b[1])-num(a[1])).filter(([,v])=>num(v)>0).slice(0,4);
+    return top.length?`ESAS-r: ${top.map(([k,v])=>`${k.toLowerCase()} ${v}/10`).join(', ')}.`:'ESAS-r sin síntomas marcados.';
+  }
+  if(id==='dolor'){
+    const n = Object.keys(d).filter(k=>k!=='nrs'&&d[k]).length;
+    if((d.nrs==null||d.nrs==='0') && !n) return '';
+    return `Dolor ${d.nrs||0}/10${n?`. Entrevista neuropática ${n}/7${n>=3?', sugiere componente neuropático':''}`:''}.`;
+  }
+  if(id==='rass') return d.rass!=null && d.rass!==''?`RASS ${d.rass}.`:'';
+  if(id==='cam'){
+    const c = [0,1,2,3].map(i=>!!d['c'+i]);
+    if(!c.some(Boolean)) return '';
+    return (c[0]&&c[1]&&(c[2]||c[3]))?'CAM positivo: cumple criterios de delirium.':'CAM negativo: no cumple el algoritmo de delirium.';
+  }
+  if(id==='mdas'){
+    const vals = Object.values(d).map(num);
+    if(vals.some(v=>v==null)) return '';
+    const t = vals.reduce((a,b)=>a+b,0);
+    return `MDAS ${t}/30: ${t>=7?'alcanza el corte de delirium':'por debajo del corte de delirium'}.`;
+  }
+  if(id==='mmse'){
+    const spec = [['Orientación',10],['Registro',3],['Atención',5],['Recuerdo',3],['Lenguaje y praxia',9]];
+    if(spec.some(([k])=>d[k]===''||d[k]==null)) return '';
+    if(spec.some(([k,m])=>num(d[k])==null || num(d[k])>m)) return 'Mini-Mental: revisá un dominio fuera de rango.';
+    const t = spec.reduce((a,[k])=>a+num(d[k]),0);
+    const v = t<=9?'deterioro grave':t<=18?'deterioro moderado':t<=23?'deterioro leve':'sin deterioro por corte habitual';
+    return `Mini-Mental ${t}/30: ${v}${d.esc?`, escolaridad ${d.esc} años`:''}.`;
+  }
+  if(id==='gds') return d.gds?`GDS ${d.gds}.`:'';
+  if(id==='zarit'){
+    const vals = Object.values(d).map(num);
+    if(vals.some(v=>v==null) || !vals.length) return '';
+    const t = vals.reduce((a,b)=>a+b,0);
+    return `Zarit breve ${t}/48: ${t>=17?'carga alta':'carga no alta por este corte'}.`;
+  }
+  if(id==='plan'){
+    const bits = [];
+    if(d.rep) bits.push(`representante ${d.rep}`);
+    if(d.lugar) bits.push(`lugar deseado de muerte: ${d.lugar}`);
+    if(d.rcp) bits.push(`reanimación: ${d.rcp}`);
+    if(d.hab) bits.push(`se habló: ${d.hab}`);
+    if(d.nohab) bits.push(`no se habló: ${d.nohab}`);
+    return bits.length?`Planificación: ${bits.join('. ')}.`:'';
+  }
+  if(id==='opio'){
+    const dose = num(d.dose);
+    if(!dose) return '';
+    const demo = toDemo(d.from, dose);
+    if(demo==null) return 'No puedo convertir ese origen con esta tabla breve.';
+    const red = num(d.red)||0;
+    const reduced = demo * (1-red/100);
+    const dest = fromDemo(d.to, reduced);
+    return `Rotación estimada: DEMO ${Math.round(demo)} mg/día, con ${red}% de reducción ${Math.round(reduced)} mg. Destino aproximado: ${dest}. Reevaluar y titular.`;
+  }
+  return '';
+}
+function toDemo(drug, dose){
+  if(drug==='Morfina VO') return dose;
+  if(drug==='Morfina SC') return dose*2;
+  if(drug==='Morfina EV') return dose*2.5;
+  if(drug==='Oxicodona VO') return dose*1.5;
+  if(drug==='Tramadol VO' || drug==='Codeína VO') return dose/10;
+  if(drug==='Fentanilo EV mcg/día') return dose/10;
+  if(drug==='Fentanilo TD mcg/h') return dose*2.4;
+  return null;
+}
+function fromDemo(drug, demo){
+  if(drug==='Morfina VO') return `${Math.round(demo)} mg/día VO`;
+  if(drug==='Morfina SC') return `${Math.round(demo/2)} mg/día SC`;
+  if(drug==='Morfina EV') return `${Math.round(demo/2.5)} mg/día EV`;
+  if(drug==='Oxicodona VO') return `${Math.round(demo/1.5)} mg/día VO`;
+  if(drug==='Tramadol VO') return `${Math.round(demo*10)} mg/día VO`;
+  if(drug==='Codeína VO') return `${Math.round(demo*10)} mg/día VO`;
+  if(drug==='Fentanilo EV mcg/día') return `${Math.round(demo*10)} mcg/día EV`;
+  if(drug==='Fentanilo TD mcg/h'){
+    const h = demo/2.4;
+    const patches = [12,25,50,75,100];
+    const near = patches.reduce((a,b)=>Math.abs(b-h)<Math.abs(a-h)?b:a);
+    return `cerca de ${near} mcg/h (estimación ${h.toFixed(0)} mcg/h; confirmar en la calculadora)`;
+  }
+  return '—';
+}
+function reportLines(){
+  const order = ['necpal','spict','hexcom','pps','ecog','kps','barthel','lawton','katz','fase','ppi','pap','esas','dolor','rass','cam','mdas','mmse','gds','zarit','plan','opio'];
+  return order.map(id=>{
+    if(!state[id]) return '';
+    return interpret(id, state[id]);
+  }).filter(Boolean);
+}
+function reportText(){
+  const lines = reportLines();
+  if(!lines.length) return '';
+  return lines.join(' ');
+}
+function plateFail(){ $('plate-frame')?.classList.add('failed'); }
+function paintLive(){
+  const t = reportText();
+  $('live').textContent = t || 'Todavía no hay texto. Completá una escala.';
+  const img = $('plate-img'), cap = $('plate-cap'), frame = $('plate-frame');
+  if(!img || !cap) return;
+  frame?.classList.remove('failed');
+  const pps = num(state.pps?.pps);
+  const fase = state.fase?.fase;
+  if(fase==='terminal' || (pps!=null && pps<=30)){
+    img.src='laminas/cama.jpg';
+    cap.textContent='Reposo casi completo. Ilustración de la situación, no un retrato ni un pronóstico dibujado.';
+  } else if((pps!=null && pps<=60) || fase==='deterioro' || fase==='inestable'){
+    img.src='laminas/pasillo.jpg';
+    cap.textContent='Se mueve con ayuda. La lámina sigue a la función, no a la cara de nadie.';
+  } else if((pps!=null && pps>=70) || fase==='estable'){
+    img.src='laminas/silla.jpg';
+    cap.textContent='Más tiempo en la silla que en la cama. Sigue siendo una viñeta de manual.';
+  } else {
+    img.src='laminas/bandeja.jpg';
+    cap.textContent='No es el paciente. Es una viñeta de manual, y cambia con el PPS o la fase. Mientras no haya datos, queda la bandeja.';
+  }
+}
+function showReport(){
+  show('report');
+  const blocks = SECTIONS.map(s=>{
+    const text = sectionText(s.ids);
+    if(!text) return '';
+    return `<div class="card"><div class="sec-copy"><h2>${s.title}</h2><button type="button" class="btn" onclick="copySection('${s.id}')">Copiar sección</button></div>
+      <textarea id="sec-${s.id}" rows="4">${esc(text)}</textarea></div>`;
+  }).join('');
+  const notes = warnings().map(w=>`<div class="warnbox">${esc(w)}</div>`).join('');
+  $('view-report').innerHTML = `<button class="btn navback" onclick="show('home')">← PALIAPP</button>
+    <div class="card"><h2>Texto para la historia clínica</h2>
+    <p class="muted">Se puede editar antes de copiar. El identificador local no entra. La fecha solo si la marcaste.</p>
+    ${notes}
+    <button class="btn btn-primary" onclick="copyReport()">Copiar todo</button></div>
+    ${blocks || '<div class="card">Nada completado todavía.</div>'}`;
+}
+function copySection(id){
+  const el = document.getElementById('sec-'+id);
+  copyText(el ? el.value.trim() : '');
+}
+function copyReport(){
+  const areas = [...document.querySelectorAll('[id^=sec-]')];
+  const t = areas.length ? areas.map(a=>a.value.trim()).filter(Boolean).join('\n\n') : reportText();
+  copyText(t);
+}
+function copyText(t){
+  if(!t){ $('live').textContent = 'Nada para copiar.'; return; }
+  const done = ()=>toast('Copiado');
+  if(navigator.clipboard?.writeText) navigator.clipboard.writeText(t).then(done, ()=>{ fallbackCopy(t); done(); });
+  else { fallbackCopy(t); done(); }
+}
+function fallbackCopy(t){
+  const ta = document.createElement('textarea');
+  ta.value = t; document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); } catch(e){}
+  ta.remove();
+}
+function toast(msg){
+  const el = $('toast');
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>el.classList.remove('on'), 1400);
+}
+function toggleDock(){
+  const dock = $('dock');
+  const open = dock.classList.toggle('open');
+  $('dock-btn').setAttribute('aria-expanded', open?'true':'false');
+  $('dock-btn').textContent = open ? 'Ocultar' : 'Ver';
+}
+function clearAll(){ if(!confirm('¿Borrar la visita de este navegador?')) return; localStorage.removeItem('cpdesk'); Object.keys(state).forEach(k=>delete state[k]); paintLive(); show('home'); }
+function renderSources(){
+  $('view-sources').innerHTML = `<button class="btn navback" onclick="show('home')">← PALIAPP</button>
+    <div class="card"><h2>De dónde sale cada cosa</h2>
+    <ul>
+      <li>NECPAL 4.0, SPICT, HexCom-Clin, Barthel, ECOG, Karnofsky, CAM, GDS y MDAS: material INC/MSAL, módulo 1, más la fuente primaria citada en cada escala.</li>
+      <li>PPI: Morita 1999. PaP: Maltoni y Pirovano 1999.</li>
+      <li>PPS: Victoria Hospice. Descriptores resumidos.</li>
+      <li>ESAS-r: Edmonton Symptom Assessment System.</li>
+      <li>DN4 entrevista: Bouhassira 2005. Ítems de cribado, no el formulario completo.</li>
+      <li>RASS: Sessler 2002. Fase: Eagar y cols.</li>
+      <li>Mini-Mental: Folstein 1975. Estructura de 30 puntos; el formulario oficial está licenciado.</li>
+      <li>Lawton 1969 y Katz 1963: no están en el PDF del módulo 1.</li>
+      <li>Zarit breve: Bédard 2001. Ítems parafraseados.</li>
+      <li>Opioides: factores de la calculadora de Antonielli. Esta pantalla es una estimación.</li>
+    </ul>
+    <div class="warnbox">Mockup de consulta. No guarda pacientes en un servidor. Lo que queda, queda en este navegador.</div></div>`;
+}
+renderHome();
+paintLive();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>

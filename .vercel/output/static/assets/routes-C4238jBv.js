@@ -1,0 +1,1 @@
+import{t as e}from"./index-CIUpeC_B.js";var t=e();function n(){return(0,t.jsx)(`iframe`,{title:`PALIAPP`,src:`/paliapp/index.html`,style:{position:`fixed`,inset:0,width:`100%`,height:`100%`,border:0,background:`#f4f4f5`}})}export{n as component};

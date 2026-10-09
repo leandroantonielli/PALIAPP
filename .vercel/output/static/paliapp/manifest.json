@@ -1,0 +1,11 @@
+{
+  "name": "PALIAPP",
+  "short_name": "PALIAPP",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f3ef",
+  "theme_color": "#1c1917",
+  "lang": "es",
+  "icons": []
+}

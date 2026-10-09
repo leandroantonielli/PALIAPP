@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Evaluación de Escalas · Cuidados Paliativos</title>
+<style>
+  :root{
+    --bg:#e8f2ef; --card:#fff; --ink:#16302c; --muted:#5b6f6b;
+    --teal:#0f6e6a; --teal-d:#0b5552; --line:#d5e4e0;
+    --need:#0f6e6a; --func:#2563eb; --prog:#b45309; --cog:#6d28d9;
+    --ok:#047857; --warn:#b45309; --bad:#b91c1c; --soft:#f4faf8;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Segoe UI",system-ui,sans-serif}
+  button,input,select,textarea{font:inherit}
+  header.app{
+    position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:12px;padding:10px 18px;
+  }
+  .logo{width:38px;height:38px;border-radius:12px;background:var(--teal);color:#fff;display:grid;place-items:center;font-weight:800}
+  header h1{margin:0;font-size:17px}
+  header p{margin:0;color:var(--muted);font-size:12px}
+  .grow{flex:1}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer}
+  .btn:hover{background:#f3faf8}
+  .btn-primary{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .btn-primary:hover{background:var(--teal-d)}
+  .wrap{max-width:1080px;margin:0 auto;padding:18px 16px 96px}
+  .card{background:var(--card);border-radius:16px;box-shadow:0 1px 0 rgba(16,50,45,.04);border:1px solid #e4eeeb;padding:16px 18px;margin-bottom:14px}
+  .id-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  label.f{display:flex;flex-direction:column;gap:4px;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:650}
+  input,select,textarea{border:1px solid #d7e3df;border-radius:10px;padding:9px 10px;background:#fff}
+  .mods{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .mod{cursor:pointer;padding:16px;border-radius:16px;border:1px solid #e4eeeb;background:#fff;min-height:170px;position:relative;overflow:hidden}
+  .mod:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(15,80,70,.07)}
+  .mod .bar{position:absolute;left:0;top:0;bottom:0;width:6px}
+  .mod h3{margin:0 0 4px;font-size:16px}
+  .mod ul{margin:8px 0 12px;padding:0 0 0 16px;color:#345;font-size:13.5px}
+  .prog{height:6px;background:#e8eeec;border-radius:99px;overflow:hidden}
+  .prog>i{display:block;height:100%;border-radius:99px}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;border-radius:99px;padding:3px 8px;background:#f3f7f6;color:#355}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .scale{border:1px solid var(--line);border-radius:12px;margin:10px 0;overflow:hidden;background:#fff}
+  .scale>header{padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:var(--soft)}
+  .scale .body{padding:14px;display:none}
+  .scale.open .body{display:block}
+  .opt{display:flex;gap:8px;align-items:flex-start;padding:8px 8px;border:1px solid #e6eeeb;border-radius:10px;margin:6px 0;cursor:pointer}
+  .opt:has(input:checked){border-color:var(--teal);background:#f1faf7}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .scorebox{background:#f4fbf9;border:1px solid #d7ece6;border-radius:12px;padding:10px 12px;margin-top:10px}
+  .scorebox b{color:var(--teal-d)}
+  footer.sticky{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;padding:10px 18px;z-index:20}
+  .muted{color:var(--muted)}
+  .hidden{display:none !important}
+  .note{width:100%;min-height:56px}
+  .src{font-size:12.5px;color:#4a5f5b;background:#f7fbfa;border-radius:10px;padding:8px 10px;margin-top:8px}
+  .src a{color:var(--teal-d)}
+  .warnbox{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:10px;padding:8px 10px;margin:8px 0;font-size:13.5px}
+  .okbox{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;border-radius:10px;padding:8px 10px;margin:8px 0}
+  .badbox{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:10px;padding:8px 10px;margin:8px 0}
+  pre.report{white-space:pre-wrap;background:#fbfefe;border:1px solid var(--line);border-radius:12px;padding:16px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13.5px}
+  .hex{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin:8px 0}
+  .navback{margin-bottom:10px}
+  @media(max-width:820px){
+    .mods,.id-grid,.grid2{grid-template-columns:1fr}
+    header.app{flex-wrap:wrap}
+  }
+</style>
+</head>
+<body>
+<header class="app">
+  <div class="logo">CP</div>
+  <div>
+    <h1>Evaluación de Escalas · Cuidados Paliativos</h1>
+    <p>Herramienta clínica · 100% local · mockup funcional</p>
+  </div>
+  <div class="grow"></div>
+  <button class="btn" onclick="save()">Guardar</button>
+  <button class="btn" onclick="loadSaved()">Recuperar</button>
+  <button class="btn" onclick="clearAll()">Limpiar</button>
+  <button class="btn" onclick="showSources()">Fuentes</button>
+</header>
+
+<div class="wrap" id="view-home">
+  <section class="card">
+    <div class="row"><h2 style="margin:0;font-size:16px">Identificación</h2><span class="chip">mínima para el informe</span></div>
+    <div class="id-grid" style="margin-top:12px">
+      <label class="f">Profesional<input id="p_prof" placeholder="Nombre y apellido"></label>
+      <label class="f">Especialidad<input id="p_esp" placeholder="Medicina Paliativa"></label>
+      <label class="f">Matrícula<input id="p_mat" placeholder="N°"></label>
+      <label class="f">Fecha<input id="p_fecha" type="date"></label>
+      <label class="f">Paciente<input id="p_nom" placeholder="Nombre y apellido"></label>
+      <label class="f">Documento<input id="p_doc"></label>
+      <label class="f">Edad<input id="p_edad" type="number" min="0"></label>
+      <label class="f">Sexo
+        <select id="p_sexo"><option value="">—</option><option>Femenino</option><option>Masculino</option><option>Otro</option></select>
+      </label>
+    </div>
+    <label class="f" style="margin-top:10px">Diagnóstico principal (opcional)<input id="p_dx" placeholder="Texto libre"></label>
+  </section>
+
+  <div class="mods">
+    <article class="mod" onclick="openMod('need')">
+      <div class="bar" style="background:var(--need)"></div>
+      <h3>Necesidades paliativas</h3>
+      <p class="muted" style="margin:0">Identificación de necesidad y complejidad.</p>
+      <ul><li>NECPAL 4.0</li><li>SPICT-ES</li><li>HexCom-Red</li></ul>
+      <div class="row"><div class="prog" style="flex:1;margin-right:10px"><i id="bar-need" style="width:0;background:var(--need)"></i></div><span class="chip" id="chip-need">0/3</span></div>
+    </article>
+    <article class="mod" onclick="openMod('func')">
+      <div class="bar" style="background:var(--func)"></div>
+      <h3>Funcionalidad</h3>
+      <p class="muted" style="margin:0">Desempeño y actividades de la vida diaria.</p>
+      <ul><li>ECOG · Karnofsky</li><li>Barthel · Lawton y Brody</li><li>Índice de Katz</li></ul>
+      <div class="row"><div class="prog" style="flex:1;margin-right:10px"><i id="bar-func" style="width:0;background:var(--func)"></i></div><span class="chip" id="chip-func">0/5</span></div>
+    </article>
+    <article class="mod" onclick="openMod('prog')">
+      <div class="bar" style="background:var(--prog)"></div>
+      <h3>Pronóstico</h3>
+      <p class="muted" style="margin:0">Estimación de supervivencia a corto plazo.</p>
+      <ul><li>PPI score</li><li>PaP score</li></ul>
+      <div class="row"><div class="prog" style="flex:1;margin-right:10px"><i id="bar-prog" style="width:0;background:var(--prog)"></i></div><span class="chip" id="chip-prog">0/2</span></div>
+    </article>
+    <article class="mod" onclick="openMod('cog')">
+      <div class="bar" style="background:var(--cog)"></div>
+      <h3>Cognición</h3>
+      <p class="muted" style="margin:0">Cribado cognitivo y delirium.</p>
+      <ul><li>Mini-Mental · CAM</li><li>GDS · MDAS</li></ul>
+      <div class="row"><div class="prog" style="flex:1;margin-right:10px"><i id="bar-cog" style="width:0;background:var(--cog)"></i></div><span class="chip" id="chip-cog">0/4</span></div>
+    </article>
+  </div>
+</div>
+
+<div class="wrap hidden" id="view-mod"></div>
+<div class="wrap hidden" id="view-report"></div>
+<div class="wrap hidden" id="view-sources"></div>
+
+<footer class="sticky">
+  <span class="muted">Procesamiento 100% local. No se envían datos.</span>
+  <div style="display:flex;gap:8px">
+    <button class="btn" onclick="goHome()">Inicio</button>
+    <button class="btn btn-primary" onclick="buildReport()">Generar reporte clínico</button>
+  </div>
+</footer>
+
+<script>
+const S = {
+  skip: {},
+  need: {}, func: {}, prog: {}, cog: {}
+};
+
+const today = new Date().toISOString().slice(0,10);
+document.getElementById('p_fecha').value = today;
+
+function idData(){
+  return {
+    prof: val('p_prof'), esp: val('p_esp'), mat: val('p_mat'), fecha: val('p_fecha'),
+    nom: val('p_nom'), doc: val('p_doc'), edad: val('p_edad'), sexo: val('p_sexo'), dx: val('p_dx')
+  };
+}
+function val(id){ return (document.getElementById(id)||{}).value || ''; }
+function goHome(){ ['view-home','view-mod','view-report','view-sources'].forEach((id,i)=>document.getElementById(id).classList.toggle('hidden', id!=='view-home')); refreshBars(); }
+function openMod(k){ document.getElementById('view-home').classList.add('hidden'); document.getElementById('view-report').classList.add('hidden'); document.getElementById('view-sources').classList.add('hidden'); const v=document.getElementById('view-mod'); v.classList.remove('hidden'); v.innerHTML = renderMod(k); bindMod(k); }
+function toggleScale(el){ el.closest('.scale').classList.toggle('open'); }
+
+const MODS = {
+  need: {title:'Necesidades paliativas', color:'var(--need)', scales:['necpal','spict','hexcom']},
+  func: {title:'Funcionalidad', color:'var(--func)', scales:['ecog','kps','barthel','lawton','katz']},
+  prog: {title:'Pronóstico', color:'var(--prog)', scales:['ppi','pap']},
+  cog: {title:'Cognición', color:'var(--cog)', scales:['mmse','cam','gds','mdas']}
+};
+
+function renderMod(k){
+  const m = MODS[k];
+  return `<button class="btn navback" onclick="goHome()">← Volver al hub</button>
+  <section class="card"><h2 style="margin:0 0 6px">${m.title}</h2>
+  <p class="muted" style="margin:0">Completá solo las escalas pertinentes. Cada una puede marcarse como no evaluable.</p></section>
+  ${m.scales.map(renderScale).join('')}`;
+}
+
+function renderScale(id){
+  const meta = SCALES[id];
+  return `<article class="scale open" data-scale="${id}">
+    <header onclick="toggleScale(this)">
+      <div><b>${meta.title}</b><div class="muted" style="font-size:12px">${meta.short}</div></div>
+      <span class="chip" id="st-${id}">pendiente</span>
+    </header>
+    <div class="body">
+      <label class="opt"><input type="checkbox" id="skip-${id}" onchange="setSkip('${id}', this.checked)"> No fue posible evaluar en esta instancia</label>
+      <div id="body-${id}">${meta.html}</div>
+      <div class="scorebox" id="box-${id}">Resultado: —</div>
+      <label class="f" style="margin-top:8px">Nota opcional<textarea class="note" id="note-${id}" oninput="recalc()"></textarea></label>
+      <div class="src">${meta.src}</div>
+    </div>
+  </article>`;
+}
+
+function setSkip(id, on){
+  S.skip[id]=on;
+  document.getElementById('body-'+id).style.opacity = on? .35:1;
+  recalc();
+}
+
+const SCALES = {
+  necpal: {
+    title:'NECPAL 4.0 CCOMS-ICO©',
+    short:'Pregunta sorpresa + parámetros de necesidad paliativa y aproximación pronóstica.',
+    src:'Fuente primaria: Gómez-Batiste X, Amblàs J, Turrillas P, et al. NECPAL 4.0 Pronóstico (2021). Parámetros según Anexo 1 del material INC/Ministerio de Salud Argentina: Tedeschi V, Vazquez A, Bunge S, Peirano G. Conceptos generales de Cuidados Paliativos. NBCP, módulo 1. Criterio NECPAL+: pregunta sorpresa “no me sorprendería” + ≥1 parámetro. Estadios I–III (medianas 38 / 17,2 / 3,6 meses).',
+    html: `
+      <p><b>Pregunta sorpresa.</b> ¿Le sorprendería que esta persona falleciera a lo largo del próximo año?</p>
+      <label class="opt"><input type="radio" name="nec_sq" value="si" onchange="recalc()"> Sí, me sorprendería</label>
+      <label class="opt"><input type="radio" name="nec_sq" value="no" onchange="recalc()"> No, no me sorprendería</label>
+      <p><b>Parámetros (marque si están presentes)</b></p>
+      ${[
+        ['nec_p1','Necesidades paliativas: la persona, los profesionales y/o los familiares piensan que esta persona requiere actualmente medidas paliativas'],
+        ['nec_p2','Pérdida funcional: impresión clínica de deterioro funcional sostenido, severo, progresivo e irreversible y/o pérdida &gt;30% en Índice de Barthel en 6 meses'],
+        ['nec_p3','Pérdida nutricional: impresión clínica de deterioro nutricional/ponderal sostenido, severo, progresivo e irreversible y/o pérdida &gt;10% de peso en 6 meses'],
+        ['nec_p4','Multi-morbilidad: ≥2 enfermedades crónicas concomitantes a la enfermedad principal'],
+        ['nec_p5','Uso de recursos: ≥2 ingresos urgentes en centros hospitalarios el último año y/o necesidad de curas complejas/intensas continuadas'],
+        ['nec_p6','Enfermedad avanzada: criterios de severidad y/o progresión de enfermedad crónica oncológica, pulmonar, cardíaca, hepática, renal o neurológica (demencia)']
+      ].map(([id,t])=>`<label class="opt"><input type="checkbox" id="${id}" onchange="recalc()"> ${t}</label>`).join('')}
+    `
+  },
+  spict: {
+    title:'SPICT-ES',
+    short:'Indicadores generales y clínicos de deterioro para identificar necesidad paliativa.',
+    src:'Fuente: Anexo 2 del material INC/MSAL Argentina (NBCP módulo 1), tomado de SPICT-ES. Fachado AA et al. Spanish adaptation and validation of SPICT-ES™. Rev Saude Publica. 2018;52:3. Programa SPICT: <a href="https://www.spict.org.uk/" target="_blank">spict.org.uk</a>. Identificación habitual: ≥2 indicadores generales + ≥1 clínico específico.',
+    html: `
+      <p><b>Indicadores generales de mala salud o deterioro</b></p>
+      ${[
+        'Ingreso(s) hospitalario(s) no planificado(s)',
+        'Limitación funcional o deterioro persistente no reversible (cama/silla >50% del día)',
+        'Depende del cuidado de otros debido a sus problemas físicos y/o mentales',
+        'El cuidador de la persona necesita más ayuda y apoyo',
+        'Pérdida de peso progresiva; bajo peso; baja masa muscular',
+        'Síntomas persistentes pese al tratamiento óptimo de la(s) condición(es) de base',
+        'La persona o la familia pide cuidados paliativos, reduce o detiene tratamiento, o prioriza calidad de vida'
+      ].map((t,i)=>`<label class="opt"><input type="checkbox" class="spict-g" onchange="recalc()"> ${t}</label>`).join('')}
+      <p><b>Indicadores clínicos específicos</b></p>
+      ${[
+        'Cáncer: deterioro funcional por progresión o demasiado frágil para tratamiento oncológico / tto. sintomático',
+        'Demencia/fragilidad: no se viste, camina o come sin ayuda; come/bebe menos; incontinencia; escasa interacción; caídas/infecciones',
+        'Cardiovascular: IC o coronariopatía extensa e intratable; disnea o dolor en reposo o mínimos esfuerzos; EVP grave inoperable',
+        'Respiratoria: enfermedad pulmonar grave crónica; disnea de reposo o mínimos esfuerzos entre agudizaciones',
+        'Renal: ERC estadio 4-5 (TFG <30) con deterioro; no iniciar o detener diálisis',
+        'Hepática: cirrosis con complicación en el último año (ascitis refractaria, encefalopatía, HRS, PBE, varices)',
+        'Neurológica: deterioro progresivo; disfagia/comunicación; neumonías aspirativas; ACV con discapacidad permanente',
+        'Otras condiciones irreversibles con riesgo de morir y pobre respuesta al tratamiento'
+      ].map(t=>`<label class="opt"><input type="checkbox" class="spict-s" onchange="recalc()"> ${t}</label>`).join('')}
+    `
+  },
+  hexcom: {
+    title:'Hexágono de la complejidad · HexCom-Clin® 2018',
+    short:'18 subáreas. El nivel de cada área = el máximo de sus subáreas. Global = el máximo de las áreas.',
+    src:'HexCom-Clin® 2018. Busquet-Duran / PADES Granollers. Anexo 4, material INC/MSAL NBCP módulo 1. Papers: J Multidiscip Healthc. 2020;13:297-308; Healthcare 2021;9:165. N = no evaluada o no procede.',
+    html: hexcomHTML()
+  },
+  ecog: {
+    title:'ECOG Performance Status',
+    short:'Grados 0 a 5. Dominio público (ECOG-ACRIN).',
+    src:'Oken et al. Am J Clin Oncol. 1982;5:649-655 (dominio público ECOG-ACRIN). Redacción en español: Anexo 8, material INC/MSAL NBCP módulo 1. Correlación del mismo material: ECOG 0 = KPS 100-90; 1 = 80-70; 2 = 60-50; 3 = 40-30; 4 = 20-10; 5 = 0.',
+    html: [0,1,2,3,4,5].map(g=>{
+      const t = {
+        0:'Totalmente asintomático; trabajo y actividades normales de la vida diaria.',
+        1:'Síntomas que impiden trabajos arduos; actividades cotidianas y trabajos ligeros. En cama solo en horario nocturno.',
+        2:'No puede trabajar. En cama varias horas además de la noche, sin superar el 50% del día. Satisface la mayoría de sus necesidades solo.',
+        3:'Encamado más de la mitad del día. Necesita ayuda para la mayoría de las AVD (p. ej. vestirse).',
+        4:'Encamado el 100% del día. Ayuda para todas las AVD (higiene, movilización, alimentación).',
+        5:'Paciente fallecido.'
+      }[g];
+      return `<label class="opt"><input type="radio" name="ecog" value="${g}" onchange="recalc()"> <b>ECOG ${g}.</b> ${t}</label>`;
+    }).join('')
+  },
+  kps: {
+    title:'Escala de Karnofsky (KPS)',
+    short:'0–100. Se reutiliza automáticamente en PaP y se ofrece como aproximación de PPS en PPI.',
+    src:'Karnofsky DA, Burchenal JH, 1949. Redacción clínica: Anexo 7, material INC/MSAL NBCP módulo 1 (también Schag, Heinrich, Ganz. J Clin Oncol. 1984;2:187-193).',
+    html: `<p>Seleccione el valor más representativo.</p>
+      <input type="range" id="kps" min="0" max="100" step="10" value="70" oninput="recalc()">
+      <div id="kps-lab" style="margin:6px 0 8px"></div>
+      ${[100,90,80,70,60,50,40,30,20,10,0].map(v=>`<label class="opt"><input type="radio" name="kpsR" value="${v}" onchange="document.getElementById('kps').value=this.value;recalc()"> ${v} · ${kpsText(v)}</label>`).join('')}`
+  },
+  barthel: {
+    title:'Índice de Barthel',
+    short:'10 ABVD. Total 0–100.',
+    src:'Mahoney FI, Barthel DW. Md State Med J. 1965. Ítems e interpretación: Anexo 9, material INC/MSAL NBCP módulo 1. &lt;20 dependencia total; 21–60 severa; 61–90 moderada; 91–99 leve; 100 independencia.',
+    html: barthelHTML()
+  },
+  lawton: {
+    title:'Escala de Lawton y Brody (AIVD)',
+    short:'8 actividades instrumentales. Total 0–8.',
+    src:'Fuente: Lawton MP, Brody EM. Assessment of older people: self-maintaining and instrumental activities of daily living. Gerontologist. 1969;9:179-186. Puntuación 1 = independiente / 0 = dependiente por ítem.',
+    html: lawtonHTML()
+  },
+  katz: {
+    title:'Índice de Katz (ABVD)',
+    short:'6 funciones. Letra A–G y puntaje 0–6.',
+    src:'Fuente: Katz S, Ford AB, Moskowitz RW, Jackson BA, Jaffe MW. Studies of illness in the aged. The index of ADL. JAMA. 1963;185:914-919.',
+    html: katzHTML()
+  },
+  ppi: {
+    title:'PPI · Palliative Prognostic Index',
+    short:'PPS + ingesta + edema + disnea en reposo + delirium. 0–15.',
+    src:'Fuente: Morita T, Tsunoda J, Inoue S, Chihara S. The Palliative Prognostic Index: a scoring system for survival prediction of terminally ill cancer patients. Support Care Cancer. 1999;7:128-133. También JPSM 1999. PPI >6: supervivencia probable &lt;3 semanas; >4: &lt;6 semanas; ≤4: &gt;6 semanas.',
+    html: ppiHTML()
+  },
+  pap: {
+    title:'PaP score · Palliative Prognostic Score',
+    short:'Requiere Karnofsky y laboratorios (leucocitos y % linfocitos). Sin labs no se calcula.',
+    src:'Fuente: Pirovano M, Maltoni M, Nanni O, et al. A new palliative prognostic score. J Pain Symptom Manage. 1999;17:231-239. Validación: Maltoni M et al. JPSM. 1999;17:240-247. No aplicar en hemopatías. Grupos A 0–5,5; B 5,6–11,0; C 11,1–17,5.',
+    html: papHTML()
+  },
+  mmse: {
+    title:'Mini-Mental State Examination (MMSE)',
+    short:'30 ítems. Puntaje e interpretación del deterioro cognitivo.',
+    src:'Fuente original: Folstein MF, Folstein SE, McHugh PR. “Mini-mental state”. J Psychiatr Res. 1975;12:189-198. Estructura de 30 puntos de uso clínico. El MMSE original está protegido por copyright (PAR, Inc.); esta pantalla reproduce la estructura pública de dominios y no sustituye el formulario oficial licenciado. Puntos de corte habituales: 24–30 sin deterioro / 19–23 leve / 10–18 moderado / ≤9 grave (ajustable por escolaridad).',
+    html: mmseHTML()
+  },
+  cam: {
+    title:'CAM · Confusion Assessment Method',
+    short:'Algoritmo diagnóstico de delirium de 4 criterios.',
+    src:'Fuente: Inouye SK, van Dyck CH, Alessi CA, Balkin S, Siegal AP, Horwitz RI. Clarifying confusion: the Confusion Assessment Method. Ann Intern Med. 1990;113:941-948. Delirium si criterios 1 y 2 + (3 o 4).',
+    html: `
+      <label class="opt"><input type="checkbox" id="cam1" onchange="recalc()"> <b>1. Inicio agudo y curso fluctuante.</b> ¿Hay cambio agudo respecto al estado basal o el comportamiento fluctúa en el día?</label>
+      <label class="opt"><input type="checkbox" id="cam2" onchange="recalc()"> <b>2. Inatención.</b> ¿Dificultad para centrar la atención, se distrae o no sigue lo que se dice?</label>
+      <label class="opt"><input type="checkbox" id="cam3" onchange="recalc()"> <b>3. Pensamiento desorganizado.</b> Conversación incoherente o irrelevante, flujo de ideas ilógico o cambios impredecibles de tema.</label>
+      <label class="opt"><input type="checkbox" id="cam4" onchange="recalc()"> <b>4. Nivel de conciencia alterado.</b> Cualquier estado distinto de alerta (vigilante, letárgico, estupor o coma; RASS ≠ 0).</label>
+    `
+  },
+  gds: {
+    title:'GDS · Global Deterioration Scale (Reisberg)',
+    short:'Estadios 1 a 7 del continuo cognitivo / demencia tipo Alzheimer.',
+    src:'Reisberg B, Ferris SH, de Leon MJ. The Global Deterioration Scale for assessment of primary degenerative dementia. Am J Psychiatry. 1982;139:1136-1139. Redacción: Anexo 11, material INC/MSAL NBCP módulo 1.',
+    html: gdsHTML()
+  },
+  mdas: {
+    title:'MDAS · Memorial Delirium Assessment Scale',
+    short:'10 ítems (0–3). Total 0–30. Corte diagnóstico ≥7.',
+    src:'Lawlor P, Nekolaichuk C, Gagnon B, et al. Clinical utility of the Memorial Delirium Assessment Scale in advanced cancer. Cancer. 2000;88:2859-2867. Instrumento y anclajes: Anexo 13, material INC/MSAL NBCP módulo 1. Corte diagnóstico del material: 7 puntos.',
+    html: mdasHTML()
+  }
+};
+
+function kpsText(v){
+  return ({
+    100:'Normal, sin quejas ni evidencia de enfermedad',
+    90:'Capaz de llevar a cabo actividad normal, pero con signos o síntomas leves',
+    80:'Actividad normal con esfuerzo, algunos signos y síntomas de enfermedad',
+    70:'Capaz de cuidarse, pero incapaz de llevar a cabo actividad normal o trabajo activo',
+    60:'Requiere atención ocasional, pero es capaz de satisfacer la mayoría de sus necesidades',
+    50:'Necesita ayuda importante y asistencia médica frecuente',
+    40:'Incapaz, necesita ayuda y asistencia especiales',
+    30:'Totalmente incapaz, necesita hospitalización y tratamiento de soporte activo',
+    20:'Muy gravemente enfermo, necesita tratamiento activo',
+    10:'Moribundo irreversible',
+    0:'Muerto'
+  })[v]||'';
+}
+function hexcomHTML(){
+  const areas = [
+    {area:'1. Clínica', items:[
+      ['hx_fis','1.1 Física','Malestar físico por síntomas o lesiones potencialmente refractarias (dolor, disnea, úlcera tumoral). Baja: control con respuesta esperable. Media: difícil control o probable refractariedad. Alta: síntomas o lesiones refractarios; posible ingreso.'],
+      ['hx_ter','1.2 Terapéutica','Dificultad de adherencia o de acceso/aplicación de fármacos o técnicas. Baja: cumplimiento asumible y técnicas comunitarias. Media: cumplimiento difícil o técnicas poco habituales (rotación de opioides, paracentesis). Alta: bloqueo terapéutico o técnicas de riesgo/ingreso.']
+    ]},
+    {area:'2. Psicológica', items:[
+      ['hx_per','2.1 Personalidad','Vulnerabilidad psicológica (enolismo, toxicomanía, psiquiatría, deterioro cognitivo). Baja: sin antecedente ni rasgo de riesgo. Media: antecedente o sospecha; demencia sin trastorno conductual. Alta: patología psiquiátrica activa, trastorno de personalidad evidente, demencia con trastorno conductual, dependencia.'],
+      ['hx_emo','2.2 Emocional','Malestar emocional desadaptativo. Baja: malestar leve y afrontamiento resiliente. Media: malestar moderado persistente, CAM de manejo difícil. Alta: sufrimiento refractario, ideación autolítica, CAM refractario.']
+    ]},
+    {area:'3. Espiritual', items:[
+      ['hx_sen','3.1 Sentido','Incapacidad de encontrar sentido. Baja: coherencia y paz. Media: crisis de sentido con momentos de disfrute. Alta: desesperanza, necesidad de medicación por sufrimiento espiritual.'],
+      ['hx_con','3.2 Conexión','Incapacidad de amar y sentirse amado. Baja: ama y se siente amado. Media: culpa, pérdida de pertenencia. Alta: aislamiento, soledad predominante, rotura familiar.'],
+      ['hx_tra','3.3 Trascendencia','Miedo al futuro o a la muerte. Baja: confianza y serenidad. Media: ira hacia Dios/destino, angustia ante la muerte. Alta: desesperanza, necesidad de sedación por sufrimiento espiritual.']
+    ]},
+    {area:'4. Sociofamiliar', items:[
+      ['hx_rel','4.1 Relacional','Malestar relacional que dificulta el cuidado. Baja: vínculo y comunicación buenos. Media: relación ambivalente. Alta: conflicto, distancia, riesgo de maltrato.'],
+      ['hx_emof','4.2 Emocional del cuidador','Impacto emocional del cuidador. Baja: respuestas adaptativas y autocuidado. Media: carga no compensada, riesgo de duelo complicado. Alta: agotamiento que bloquea el cuidado en domicilio.'],
+      ['hx_pra','4.3 Práctica','Manejo de necesidades básicas. Baja: cuidado pleno, vivienda adecuada. Media: sobrecarga, barreras arquitectónicas. Alta: no se puede cuidar en domicilio, sospecha de negligencia.'],
+      ['hx_ext','4.4 Externa','Ayuda fuera del núcleo. Baja: familia extensa y red suficiente. Media: soporte limitado. Alta: sin apoyo válido; domicilio no sostenible.'],
+      ['hx_eco','4.5 Económica','Malestar financiero. Baja: recursos suficientes. Media: dificultades y estrés por gastos. Alta: no cubre necesidades básicas.']
+    ]},
+    {area:'5. Ética', items:[
+      ['hx_inf','5.1 Información','Manejo de información de diagnóstico/pronóstico. Baja: sin conflicto o resuelto. Media: conflicto persistente. Alta: conspiración de silencio refractaria. No confundir conspiración (el enfermo pide información) con pacto (no la pide).'],
+      ['hx_aet','5.2 AET','Adecuación del esfuerzo terapéutico. Baja: voluntad expresada y respetada. Media: dificultades para expresar o sostener la voluntad. Alta: discrepancia insalvable o enfermo no competente sin representante.'],
+      ['hx_dam','5.3 DAM','Deseo de anticipar la muerte. Baja: esporádico y contenido. Media: sostenido, única salida percibida. Alta: petición de eutanasia, suicidio asistido o plan suicida. No confundir con aceptación de la muerte.']
+    ]},
+    {area:'6. Muerte', items:[
+      ['hx_ubi','6.1 Ubicación','Lugar de muerte. Baja: acuerdo de morir en domicilio y equipo disponible. Media: desacuerdo o apoyo insuficiente. Alta: demanda urgente de ingreso o imposibilidad domiciliaria. N si nunca se planteó.'],
+      ['hx_sud','6.2 SUD','Situación de últimos días. Baja: SUD poco sintomática, sedación habitual. Media: conflicto sobre sedación. Alta: síntomas refractarios, SUD >5 días, sedación IV a dosis altas. N si no está en SUD.'],
+      ['hx_due','6.3 Duelo','Factores de riesgo de duelo. Baja: ausentes. Media: hay indicadores de riesgo. Alta: alta vulnerabilidad de duelo complejo.']
+    ]}
+  ];
+  return `<p class="muted">Marque Baja / Media / Alta / No evaluada en cada subárea. Puede abrir la guía breve de cada ítem. El nivel de un área es el máximo de sus subáreas; el global es el máximo de las áreas.</p>` +
+    areas.map(a=>`<div style="margin:14px 0 8px;font-weight:700;color:var(--teal-d)">${a.area}</div>` + a.items.map(([id,t,help])=>`
+      <div class="hex" style="align-items:start">
+        <div>
+          <b>${t}</b>
+          <details style="margin:4px 0 6px;color:#4a5f5b;font-size:13px"><summary>Guía de niveles</summary><p>${help}</p></details>
+          <input placeholder="Nota opcional" id="n${id}" oninput="recalc()" style="width:100%">
+        </div>
+        <select id="${id}" onchange="recalc()">
+          <option value="">N · no evaluada</option>
+          <option value="Baja">Baja</option>
+          <option value="Media">Media</option>
+          <option value="Alta">Alta</option>
+        </select>
+      </div>`).join('')).join('');
+}
+function gdsHTML(){
+  const rows = [
+    [1,'Sin deterioro cognitivo.','Normalidad'],
+    [2,'Alteración cognitiva subjetiva (olvida dónde dejó objetos o nombres conocidos).','Deterioro cognitivo subjetivo'],
+    [3,'Déficits sutiles observables por terceros; menor rendimiento laboral/social; pierde objetos de valor.','Compatible con demencia incipiente'],
+    [4,'Déficits claros. Menor conocimiento de hechos recientes; dificultad para viajar solo y manejar finanzas.','Demencia leve'],
+    [5,'Dificultad con datos personales (dirección, teléfono, familiares). Desorientación temporoespacial. Ayuda para elegir ropa.','Demencia moderada'],
+    [6,'Gran incapacidad para verbalizar episodios recientes. Puede olvidar el nombre del cónyuge. Alteraciones conductuales (delirios, ansiedad, agitación, abulia).','Demencia moderadamente severa'],
+    [7,'Pocas palabras inteligibles o incompetencia verbal. Deterioro cognitivo y motor muy grave.','Demencia grave']
+  ];
+  return rows.map(([n,c,d])=>`<label class="opt"><input type="radio" name="gds" value="${n}" onchange="recalc()"> <b>GDS ${n}.</b> ${c} <i>— ${d}</i></label>`).join('');
+}
+function mdasHTML(){
+  const items = [
+    ['md1','1. Disminución del nivel de conciencia','0 No (plenamente consciente) · 1 Leve (se recupera si se insiste) · 2 Moderada (conciencia incompleta) · 3 Grave (no reconoce entorno; entrevista imposible)'],
+    ['md2','2. Desorientación (10 ítems)','0: 9–10 correctos · 1: 7–8 · 2: 5–6 · 3: ≤4'],
+    ['md3','3. Memoria a corto plazo (3 palabras, recuerdo a 5 min)','0 repite y recuerda 3 · 1 no recuerda 1 · 2 no recuerda 2–3 · 3 no logra repetir ≥1'],
+    ['md4','4. Series numéricas','0: ≥5 adelante y 4 atrás · 1: 5 adelante y 3 atrás · 2: 4–5 adelante, no 3 atrás · 3: ≤3 adelante'],
+    ['md5','5. Atención (mantener y cambiar el foco)','0 normal · 1 1–2 olvidos sin alargar · 2 frecuentes, alargan · 3 constantes, entrevista imposible'],
+    ['md6','6. Pensamiento desorganizado','0 coherente · 1 levemente difícil de seguir · 2 claro y alarga · 3 entrevista imposible'],
+    ['md7','7. Alteraciones de la percepción','0 no · 1 ilusiones/alucinaciones fugaces · 2 frecuentes con mínima conducta · 3 intensas que interrumpen cuidados'],
+    ['md8','8. Ideación delirante','0 no · 1 suspicacia · 2 delirio que no interfiere cuidados · 3 persistente que interfiere'],
+    ['md9','9. Actividad psicomotora (hipo / hiper / mixto)','0 normal · 1 apenas perceptible · 2 innegable · 3 grave (catatonía o agitación que impide el examen)'],
+    ['md10','10. Ciclo vigilia-sueño','0 duerme de noche y alerta de día · 1 leve · 2 despertares prolongados / somnolencia diurna · 3 despierto de noche o no despertabile de día']
+  ];
+  return `<p class="muted">Valore según la relación actual o las últimas horas. Cada ítem 0–3. Corte diagnóstico del material INC: ≥7.</p>` +
+    items.map(([id,t,h])=>`<div style="margin:8px 0"><b>${t}</b><div class="muted" style="font-size:12.5px;margin:2px 0 6px">${h}</div>
+      ${[0,1,2,3].map(n=>`<label class="opt" style="display:inline-flex;margin-right:8px"><input type="radio" name="${id}" value="${n}" onchange="recalc()"> ${n}</label>`).join('')}
+    </div>`).join('');
+}
+function barthelHTML(){
+  const items = [
+    ['bt_alim','Alimentación',[['10','Independiente'],['5','Necesita ayuda'],['0','Dependiente']]],
+    ['bt_banio','Baño',[['5','Independiente'],['0','Dependiente']]],
+    ['bt_vest','Vestido',[['10','Independiente'],['5','Necesita ayuda'],['0','Dependiente']]],
+    ['bt_aseo','Aseo personal',[['5','Independiente'],['0','Dependiente']]],
+    ['bt_depos','Deposición',[['10','Continente'],['5','Accidente ocasional'],['0','Incontinente']]],
+    ['bt_micc','Micción',[['10','Continente'],['5','Accidente ocasional'],['0','Incontinente']]],
+    ['bt_ret','Uso del retrete',[['10','Independiente'],['5','Necesita ayuda'],['0','Dependiente']]],
+    ['bt_tras','Traslado cama-sillón',[['15','Independiente'],['10','Mínima ayuda'],['5','Gran ayuda'],['0','Dependiente']]],
+    ['bt_deam','Deambulación',[['15','Independiente 50 m'],['10','Ayuda / supervisión'],['5','Silla de ruedas independiente'],['0','Inmóvil']]],
+    ['bt_esc','Escaleras',[['10','Independiente'],['5','Necesita ayuda'],['0','Incapaz']]]
+  ];
+  return items.map(([id,t,opts])=>`<div style="margin:8px 0"><b>${t}</b>${opts.map(([v,l])=>`<label class="opt"><input type="radio" name="${id}" value="${v}" onchange="recalc()"> ${l} (${v})</label>`).join('')}</div>`).join('');
+}
+function lawtonHTML(){
+  const items = [
+    ['lw_tel','Teléfono'],['lw_com','Compras'],['lw_comida','Preparación de comidas'],['lw_casa','Cuidado de la casa'],
+    ['lw_ropa','Lavado de ropa'],['lw_trans','Transporte'],['lw_med','Responsabilidad de la medicación'],['lw_din','Manejo del dinero']
+  ];
+  return items.map(([id,t])=>`<div style="margin:8px 0"><b>${t}</b>
+    <label class="opt"><input type="radio" name="${id}" value="1" onchange="recalc()"> Independiente (1)</label>
+    <label class="opt"><input type="radio" name="${id}" value="0" onchange="recalc()"> Dependiente (0)</label></div>`).join('')
+    + `<p class="muted">Versión de 8 ítems para todos los sexos. La versión clásica a veces omite 3 ítems en varones; aquí se informan los 8.</p>`;
+}
+function katzHTML(){
+  const items = [
+    ['kz_banho','Baño'],['kz_vest','Vestido'],['kz_wc','Uso del retrete'],
+    ['kz_tras','Transferencias'],['kz_cont','Continencia'],['kz_alim','Alimentación']
+  ];
+  return items.map(([id,t])=>`<div style="margin:8px 0"><b>${t}</b>
+    <label class="opt"><input type="radio" name="${id}" value="1" onchange="recalc()"> Independiente (1)</label>
+    <label class="opt"><input type="radio" name="${id}" value="0" onchange="recalc()"> Dependiente (0)</label></div>`).join('');
+}
+function ppiHTML(){
+  return `
+    <div class="okbox" id="ppi-kps-hint"></div>
+    <p><b>Palliative Performance Scale (PPS)</b></p>
+    <label class="opt"><input type="radio" name="pps" value="4" onchange="recalc()"> 10–20% (4,0)</label>
+    <label class="opt"><input type="radio" name="pps" value="2.5" onchange="recalc()"> 30–50% (2,5)</label>
+    <label class="opt"><input type="radio" name="pps" value="0" onchange="recalc()"> ≥60% (0)</label>
+    <p><b>Ingesta oral</b></p>
+    <label class="opt"><input type="radio" name="ppi_ing" value="2.5" onchange="recalc()"> Severamente reducida, bocados o menos (2,5)</label>
+    <label class="opt"><input type="radio" name="ppi_ing" value="1" onchange="recalc()"> Moderadamente reducida (1,0)</label>
+    <label class="opt"><input type="radio" name="ppi_ing" value="0" onchange="recalc()"> Normal (0)</label>
+    <p><b>Edema</b></p>
+    <label class="opt"><input type="radio" name="ppi_ed" value="1" onchange="recalc()"> Presente (1,0)</label>
+    <label class="opt"><input type="radio" name="ppi_ed" value="0" onchange="recalc()"> Ausente (0)</label>
+    <p><b>Disnea en reposo</b></p>
+    <label class="opt"><input type="radio" name="ppi_dys" value="3.5" onchange="recalc()"> Presente (3,5)</label>
+    <label class="opt"><input type="radio" name="ppi_dys" value="0" onchange="recalc()"> Ausente (0)</label>
+    <p><b>Delirium</b></p>
+    <label class="opt"><input type="radio" name="ppi_del" value="4" onchange="recalc()"> Presente (4,0)</label>
+    <label class="opt"><input type="radio" name="ppi_del" value="0" onchange="recalc()"> Ausente (0)</label>
+  `;
+}
+function papHTML(){
+  return `
+    <div class="okbox" id="pap-kps-hint"></div>
+    <p><b>Disnea</b></p>
+    <label class="opt"><input type="radio" name="pap_dys" value="1" onchange="recalc()"> Presente (1,0)</label>
+    <label class="opt"><input type="radio" name="pap_dys" value="0" onchange="recalc()"> Ausente (0)</label>
+    <p><b>Anorexia</b></p>
+    <label class="opt"><input type="radio" name="pap_an" value="1.5" onchange="recalc()"> Presente (1,5)</label>
+    <label class="opt"><input type="radio" name="pap_an" value="0" onchange="recalc()"> Ausente (0)</label>
+    <p><b>Predicción clínica de supervivencia</b></p>
+    ${[['>12','0'],['11-12','2'],['9-10','2.5'],['7-8','2.5'],['5-6','4.5'],['3-4','6'],['1-2','8.5']].map(([l,v])=>`<label class="opt"><input type="radio" name="pap_cps" value="${v}" onchange="recalc()"> ${l} semanas (${v.replace('.',',')})</label>`).join('')}
+    <p><b>Laboratorio (obligatorio)</b></p>
+    <div class="grid2">
+      <label class="f">Leucocitos (cél/mm³)<input id="pap_wbc" type="number" min="0" step="100" placeholder="Ej: 9200" oninput="recalc()"></label>
+      <label class="f">Linfocitos (%)<input id="pap_lym" type="number" min="0" max="100" step="0.1" placeholder="Ej: 14" oninput="recalc()"></label>
+    </div>
+    <p class="muted">Karnofsky se toma del módulo Funcionalidad si ya está cargado. Si no, indíquelo aquí:</p>
+    <label class="f">KPS manual (solo si no hay KPS previo)<input id="pap_kps" type="number" min="0" max="100" step="10" oninput="recalc()"></label>
+  `;
+}
+function mmseHTML(){
+  const oriT = ['Año','Estación','Mes','Día del mes','Día de la semana'];
+  const oriE = ['País / nación','Provincia / estado','Ciudad / localidad','Lugar (hospital, domicilio)','Piso / habitación'];
+  return `
+    <label class="f">Escolaridad (años)<input id="mmse_esc" type="number" min="0" max="30" oninput="recalc()"></label>
+    <p><b>Orientación temporal (5)</b></p>
+    ${oriT.map((t,i)=>`<label class="opt"><input type="checkbox" class="mmse-pt" data-pts="1" onchange="recalc()"> ${t} correcto</label>`).join('')}
+    <p><b>Orientación espacial (5)</b></p>
+    ${oriE.map(t=>`<label class="opt"><input type="checkbox" class="mmse-pt" data-pts="1" onchange="recalc()"> ${t} correcto</label>`).join('')}
+    <p><b>Registro (3)</b> Repite tres palabras (p. ej. peseta, caballo, manzana).</p>
+    <label class="f">Palabras correctas en el registro
+      <select id="mmse_reg" onchange="recalc()"><option value="">—</option><option>0</option><option>1</option><option>2</option><option>3</option></select>
+    </label>
+    <p><b>Atención y cálculo (5)</b> Restar de 7 en 7 desde 100, o deletrear una palabra de 5 letras al revés.</p>
+    <label class="f">Aciertos
+      <select id="mmse_att" onchange="recalc()"><option value="">—</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+    </label>
+    <p><b>Recuerdo diferido (3)</b></p>
+    <label class="f">Palabras recordadas
+      <select id="mmse_rec" onchange="recalc()"><option value="">—</option><option>0</option><option>1</option><option>2</option><option>3</option></select>
+    </label>
+    <p><b>Lenguaje y praxis (9)</b></p>
+    <label class="opt"><input type="checkbox" class="mmse-pt" data-pts="1" onchange="recalc()"> Nombra objeto 1 (p. ej. reloj)</label>
+    <label class="opt"><input type="checkbox" class="mmse-pt" data-pts="1" onchange="recalc()"> Nombra objeto 2 (p. ej. lápiz)</label>
+    <label class="opt"><input type="checkbox" class="mmse-pt" data-pts="1" onchange="recalc()"> Repite una frase</label>
+    <label class="opt"><input type="checkbox" class="mmse-pt" data-pts="1" onchange="recalc()"> Orden de 3 pasos: toma el papel</label>
+    <label class="opt"><input type="checkbox" class="mmse-pt" data-pts="1" onchange="recalc()"> Orden de 3 pasos: lo dobla</label>
+    <label class="opt"><input type="checkbox" class="mmse-pt" data-pts="1" onchange="recalc()"> Orden de 3 pasos: lo deja</label>
+    <label class="opt"><input type="checkbox" class="mmse-pt" data-pts="1" onchange="recalc()"> Lee y ejecuta “CIERRE LOS OJOS”</label>
+    <label class="opt"><input type="checkbox" class="mmse-pt" data-pts="1" onchange="recalc()"> Escribe una oración</label>
+    <div style="display:flex;gap:16px;align-items:center;margin:10px 0">
+      <svg width="90" height="70" viewBox="0 0 90 70">
+        <polygon points="20,8 38,20 31,40 9,40 2,20" fill="none" stroke="#0f6e6a" stroke-width="2"/>
+        <polygon points="52,18 70,30 63,50 41,50 34,30" fill="none" stroke="#0f6e6a" stroke-width="2"/>
+      </svg>
+      <label class="opt" style="flex:1"><input type="checkbox" class="mmse-pt" data-pts="1" onchange="recalc()"> Copia de pentágonos correcta (10 ángulos, intersección cuadrilátera)</label>
+    </div>
+  `;
+}
+
+function radio(name){ const el=document.querySelector(`input[name="${name}"]:checked`); return el? el.value: null; }
+function numRadio(name){ const v=radio(name); return v===null? null: Number(v); }
+function checked(id){ const el=document.getElementById(id); return !!(el && el.checked); }
+
+function kpsValue(){
+  const sl = document.getElementById('kps');
+  if(sl) return Number(sl.value);
+  return S.func.kps ?? null;
+}
+
+function results(){
+  const R = {};
+  // NECPAL
+  if(S.skip.necpal) R.necpal={status:'no evaluable'};
+  else {
+    const sq = radio('nec_sq');
+    const params = ['nec_p1','nec_p2','nec_p3','nec_p4','nec_p5','nec_p6'].filter(checked).length;
+    if(!sq) R.necpal={status:'incompleto'};
+    else {
+      const pos = sq==='no' && params>=1;
+      let stage=null, med=null;
+      if(pos){
+        if(params<=2){stage='I'; med='38 meses';}
+        else if(params<=4){stage='II'; med='17,2 meses';}
+        else {stage='III'; med='3,6 meses';}
+      }
+      R.necpal={status:'ok', pos, params, sq, stage, med,
+        text: pos? `NECPAL+ (pregunta sorpresa positiva y ${params} parámetro${params===1?'':'s'}). Estadio pronóstico ${stage} (mediana de supervivencia publicada ${med}).`
+                 : (sq==='si'? 'NECPAL−: la pregunta sorpresa es negativa (sí me sorprendería).'
+                             : `NECPAL−: pregunta sorpresa positiva pero sin parámetros.`)};
+    }
+  }
+  // SPICT
+  if(S.skip.spict) R.spict={status:'no evaluable'};
+  else {
+    const g=[...document.querySelectorAll('.spict-g:checked')].length;
+    const s=[...document.querySelectorAll('.spict-s:checked')].length;
+    if(g+s===0) R.spict={status:'incompleto'};
+    else {
+      const pos=g>=2 && s>=1;
+      R.spict={status:'ok',g,s,pos,text: pos? `SPICT positivo (${g} indicadores generales y ${s} clínicos). Se identifican necesidades paliativas.`
+        : `SPICT no alcanza criterio de identificación (≥2 generales + ≥1 específico). Actual: ${g} generales y ${s} específicos.`};
+    }
+  }
+  // HEX Clin
+  if(S.skip.hexcom) R.hexcom={status:'no evaluable'};
+  else {
+    const groups = {
+      Clínica:['hx_fis','hx_ter'],
+      Psicológica:['hx_per','hx_emo'],
+      Espiritual:['hx_sen','hx_con','hx_tra'],
+      Sociofamiliar:['hx_rel','hx_emof','hx_pra','hx_ext','hx_eco'],
+      Ética:['hx_inf','hx_aet','hx_dam'],
+      Muerte:['hx_ubi','hx_sud','hx_due']
+    };
+    const labels = {hx_fis:'física',hx_ter:'terapéutica',hx_per:'personalidad',hx_emo:'emocional',hx_sen:'sentido',hx_con:'conexión',hx_tra:'trascendencia',hx_rel:'relacional',hx_emof:'emocional cuidador',hx_pra:'práctica',hx_ext:'externa',hx_eco:'económica',hx_inf:'información',hx_aet:'AET',hx_dam:'DAM',hx_ubi:'ubicación',hx_sud:'SUD',hx_due:'duelo'};
+    const rank={Baja:1,Media:2,Alta:3};
+    const filled=[];
+    const areaMax={};
+    Object.entries(groups).forEach(([area,ids])=>{
+      ids.forEach(id=>{
+        const el=document.getElementById(id);
+        const n=document.getElementById('n'+id);
+        const nivel=el? el.value:'';
+        if(nivel){
+          filled.push({id, nivel, nota:n?n.value:'', area});
+          if(!areaMax[area] || rank[nivel]>rank[areaMax[area]]) areaMax[area]=nivel;
+        }
+      });
+    });
+    if(!filled.length) R.hexcom={status:'incompleto'};
+    else {
+      const globals=Object.values(areaMax);
+      const global=globals.reduce((a,b)=> rank[b]>rank[a]?b:a);
+      const altas=filled.filter(v=>v.nivel==='Alta').map(v=>labels[v.id]);
+      R.hexcom={status:'ok', global, text:`HexCom-Clin: complejidad global ${global.toLowerCase()}. Por área: ${Object.entries(areaMax).map(([a,n])=>`${a} ${n}`).join('; ')}.${altas.length? ' Subáreas en alta: '+altas.join(', ')+'.':''}`};
+    }
+  }
+  // ECOG
+  if(S.skip.ecog) R.ecog={status:'no evaluable'};
+  else {
+    const v=radio('ecog');
+    if(v===null) R.ecog={status:'incompleto'};
+    else R.ecog={status:'ok', v:Number(v), text:`ECOG ${v}.`};
+  }
+  // KPS
+  if(S.skip.kps) R.kps={status:'no evaluable'};
+  else {
+    const sl=document.getElementById('kps');
+    if(!sl) R.kps={status:'incompleto'};
+    else {
+      const v=Number(sl.value);
+      S.func.kps=v;
+      R.kps={status:'ok', v, text:`Karnofsky ${v}% (${kpsText(v)}).`};
+    }
+  }
+  // Barthel
+  if(S.skip.barthel) R.barthel={status:'no evaluable'};
+  else {
+    const keys=['bt_alim','bt_banio','bt_vest','bt_aseo','bt_depos','bt_micc','bt_ret','bt_tras','bt_deam','bt_esc'];
+    const nums=keys.map(numRadio);
+    if(nums.some(n=>n===null)) R.barthel={status:'incompleto'};
+    else {
+      const tot=nums.reduce((a,b)=>a+b,0);
+      let interp='Independencia';
+      if(tot<20) interp='Dependencia total';
+      else if(tot<=60) interp='Dependencia severa';
+      else if(tot<=90) interp='Dependencia moderada';
+      else if(tot<=99) interp='Dependencia leve';
+      R.barthel={status:'ok', tot, interp, text:`Barthel ${tot}/100: ${interp}.`};
+    }
+  }
+  // Lawton
+  if(S.skip.lawton) R.lawton={status:'no evaluable'};
+  else {
+    const keys=['lw_tel','lw_com','lw_comida','lw_casa','lw_ropa','lw_trans','lw_med','lw_din'];
+    const nums=keys.map(numRadio);
+    if(nums.some(n=>n===null)) R.lawton={status:'incompleto'};
+    else {
+      const tot=nums.reduce((a,b)=>a+b,0);
+      let interp='Independiente';
+      if(tot<=1) interp='Dependencia total';
+      else if(tot<=3) interp='Dependencia grave';
+      else if(tot<=5) interp='Dependencia moderada';
+      else if(tot<=7) interp='Dependencia ligera';
+      R.lawton={status:'ok', tot, interp, text:`Lawton y Brody ${tot}/8: ${interp} en AIVD.`};
+    }
+  }
+  // Katz
+  if(S.skip.katz) R.katz={status:'no evaluable'};
+  else {
+    const order=['kz_banho','kz_vest','kz_wc','kz_tras','kz_cont','kz_alim'];
+    const nums=order.map(numRadio);
+    if(nums.some(n=>n===null)) R.katz={status:'incompleto'};
+    else {
+      const tot=nums.reduce((a,b)=>a+b,0);
+      const dep=nums.map(n=>n===0);
+      let letter='Otros';
+      if(dep.every(x=>!x)) letter='A';
+      else if(dep.filter(Boolean).length===1) letter='B';
+      else if(dep[0] && dep.filter(Boolean).length===2) letter='C';
+      else if(dep[0]&&dep[1] && dep.filter(Boolean).length===3) letter='D';
+      else if(dep[0]&&dep[1]&&dep[2] && dep.filter(Boolean).length===4) letter='E';
+      else if(dep[0]&&dep[1]&&dep[2]&&dep[3] && dep.filter(Boolean).length===5) letter='F';
+      else if(dep.every(Boolean)) letter='G';
+      R.katz={status:'ok', tot, letter, text:`Katz ${letter} (${tot}/6 independientes).`};
+    }
+  }
+  // PPI
+  if(S.skip.ppi) R.ppi={status:'no evaluable'};
+  else {
+    const parts=['pps','ppi_ing','ppi_ed','ppi_dys','ppi_del'].map(numRadio);
+    if(parts.some(n=>n===null)) R.ppi={status:'incompleto'};
+    else {
+      const tot=parts.reduce((a,b)=>a+b,0);
+      let interp='supervivencia probable mayor a 6 semanas';
+      if(tot>6) interp='supervivencia probable menor a 3 semanas';
+      else if(tot>4) interp='supervivencia probable menor a 6 semanas';
+      R.ppi={status:'ok', tot, interp, text:`PPI ${String(tot).replace('.',',')} / 15: ${interp}.`};
+    }
+  }
+  // PAP
+  if(S.skip.pap) R.pap={status:'no evaluable'};
+  else {
+    const wbcEl=document.getElementById('pap_wbc');
+    const lymEl=document.getElementById('pap_lym');
+    const wbc=wbcEl && wbcEl.value!=='' ? Number(wbcEl.value): null;
+    const lym=lymEl && lymEl.value!=='' ? Number(lymEl.value): null;
+    const dys=numRadio('pap_dys'), an=numRadio('pap_an'), cps=numRadio('pap_cps');
+    let kps = (S.func && S.func.kps!=null)? S.func.kps : null;
+    const manual=document.getElementById('pap_kps');
+    if((kps===null || S.skip.kps) && manual && manual.value!=='') kps=Number(manual.value);
+    if(wbc===null || lym===null) R.pap={status:'sin labs', text:'PaP no calculado: faltan leucocitos y/o porcentaje de linfocitos (obligatorios).'};
+    else if(dys===null||an===null||cps===null||kps===null) R.pap={status:'incompleto'};
+    else {
+      let w=0; if(wbc>11000) w=1.5; else if(wbc>=8501) w=0.5;
+      let l=0; if(lym<12) l=2.5; else if(lym<20) l=1;
+      const kpts = kps<=40 ? 2.5 : 0; // 10–40 = 2.5; ≥50 = 0 (Maltoni/Pirovano, Annals Oncol reproduction)
+      const tot=dys+an+cps+w+l+kpts;
+      let group='A', prob='>70% a 30 días';
+      if(tot>=11.1){group='C'; prob='<30% a 30 días';}
+      else if(tot>=5.6){group='B'; prob='30–70% a 30 días';}
+      R.pap={status:'ok', tot, group, prob, text:`PaP ${String(tot).replace('.',',')} · grupo ${group} (probabilidad de supervivencia a 30 días ${prob}). KPS utilizado: ${kps}%. No aplicar en hemopatías.`};
+    }
+  }
+  // MMSE
+  if(S.skip.mmse) R.mmse={status:'no evaluable'};
+  else {
+    const boxes=[...document.querySelectorAll('.mmse-pt:checked')].reduce((a,el)=>a+Number(el.dataset.pts||1),0);
+    const reg=document.getElementById('mmse_reg');
+    const att=document.getElementById('mmse_att');
+    const rec=document.getElementById('mmse_rec');
+    if(!reg || reg.value==='' || att.value==='' || rec.value==='') R.mmse={status:'incompleto'};
+    else {
+      const tot=boxes + Number(reg.value)+Number(att.value)+Number(rec.value);
+      let verd='Sin deterioro cognitivo';
+      if(tot<=9) verd='Deterioro cognitivo grave';
+      else if(tot<=18) verd='Deterioro cognitivo moderado';
+      else if(tot<=23) verd='Deterioro cognitivo leve';
+      else if(tot<=26) verd='Deterioro cognitivo posible / límite';
+      const esc=document.getElementById('mmse_esc');
+      const extra = esc && esc.value? ` Escolaridad declarada: ${esc.value} años (ajustar clínicamente el punto de corte).` : ' No se consignó escolaridad.';
+      R.mmse={status:'ok', tot, verd, text:`Mini-Mental ${tot}/30: ${verd}.${extra}`};
+    }
+  }
+  // CAM
+  if(S.skip.cam) R.cam={status:'no evaluable'};
+  else {
+    const a=checked('cam1'), b=checked('cam2'), c=checked('cam3'), d=checked('cam4');
+    if(!a && !b && !c && !d) R.cam={status:'incompleto'};
+    else {
+      const pos=a && b && (c||d);
+      R.cam={status:'ok', pos, text: pos? 'CAM positivo: cumple criterios de síndrome confusional agudo (delirium).'
+                                       : 'CAM negativo: no cumple el algoritmo de delirium.'};
+    }
+  }
+  // GDS
+  if(S.skip.gds) R.gds={status:'no evaluable'};
+  else {
+    const v=radio('gds');
+    const map={1:'Normalidad',2:'Deterioro cognitivo subjetivo',3:'Compatible con demencia incipiente',4:'Demencia leve',5:'Demencia moderada',6:'Demencia moderadamente severa',7:'Demencia grave'};
+    if(v===null) R.gds={status:'incompleto'};
+    else R.gds={status:'ok', v:Number(v), text:`GDS ${v}: ${map[v]}.`};
+  }
+  // MDAS
+  if(S.skip.mdas) R.mdas={status:'no evaluable'};
+  else {
+    const keys=['md1','md2','md3','md4','md5','md6','md7','md8','md9','md10'];
+    const nums=keys.map(numRadio);
+    if(nums.some(n=>n===null)) R.mdas={status:'incompleto'};
+    else {
+      const tot=nums.reduce((a,b)=>a+b,0);
+      const pos=tot>=7;
+      R.mdas={status:'ok', tot, text:`MDAS ${tot}/30: ${pos? 'alcanza el corte diagnóstico de delirium (≥7)':'por debajo del corte diagnóstico de delirium (<7)'}.`};
+    }
+  }
+  return R;
+}
+
+function setBox(id, html, status){
+  const box=document.getElementById('box-'+id);
+  const st=document.getElementById('st-'+id);
+  if(box) box.innerHTML=html;
+  if(st){ st.textContent = status==='ok'?'completa': status==='no evaluable'?'no evaluable': status==='sin labs'?'sin labs':'pendiente'; }
+}
+
+function recalc(){
+  const R=results();
+  const fmt=(r, fallback)=>{
+    if(!r) return 'Resultado: —';
+    if(r.status==='ok') return `<b>${r.text}</b>`;
+    if(r.status==='no evaluable') return 'No evaluable en esta instancia.';
+    if(r.status==='sin labs') return r.text;
+    return fallback||'Complete los ítems para obtener el resultado.';
+  };
+  Object.keys(SCALES).forEach(id=>{
+    if(document.getElementById('box-'+id)) setBox(id, fmt(R[id]), R[id]?R[id].status:'incompleto');
+  });
+  const lab=document.getElementById('kps-lab');
+  if(lab && document.getElementById('kps')){
+    const v=Number(document.getElementById('kps').value);
+    lab.innerHTML=`<b>${v}%</b> · ${kpsText(v)}`;
+    const r=document.querySelector(`input[name="kpsR"][value="${v}"]`);
+    if(r) r.checked=true;
+  }
+  const hint=document.getElementById('ppi-kps-hint');
+  if(hint){
+    const v=S.func.kps;
+    if(v!=null && !S.skip.kps){
+      let sug = v>=60? '≥60% (0 pts)': v>=30? '30–50% (2,5 pts)': '10–20% (4 pts)';
+      hint.textContent=`Karnofsky cargado: ${v}%. Aproximación habitual a PPS: ${sug}. El PPS no es idéntico al KPS; confirme el valor.`;
+    } else hint.textContent='Si carga Karnofsky en Funcionalidad, se sugiere aquí el tramo de PPS equivalente.';
+  }
+  const ph=document.getElementById('pap-kps-hint');
+  if(ph){
+    const v=S.func.kps;
+    ph.textContent = (v!=null && !S.skip.kps)? `Se reutilizará Karnofsky ${v}% en el PaP.` : 'Aún no hay Karnofsky. Cárguelo en Funcionalidad o en el campo manual.';
+  }
+  refreshBars();
+}
+
+function scaleStatus(id){
+  if(S.skip[id]) return 'skip';
+  const R=results();
+  return R[id] && R[id].status==='ok' ? 'ok' : (R[id] && (R[id].status==='sin labs') ? 'partial' : 'empty');
+}
+
+function refreshBars(){
+  Object.entries(MODS).forEach(([k,m])=>{
+    const done=m.scales.filter(id=>S.skip[id] || (results()[id]&&results()[id].status==='ok')).length;
+    const el=document.getElementById('bar-'+k);
+    const chip=document.getElementById('chip-'+k);
+    if(el) el.style.width = (done/m.scales.length*100)+'%';
+    if(chip) chip.textContent = `${done}/${m.scales.length}`;
+  });
+}
+
+function bindMod(k){ recalc(); }
+
+function save(){
+  const payload={S, skip:S.skip, id:idData(), kps:S.func.kps};
+  localStorage.setItem('escalas_paliativos_v1', JSON.stringify(payload));
+  alert('Guardado en este navegador.');
+}
+function loadSaved(){
+  const raw=localStorage.getItem('escalas_paliativos_v1');
+  if(!raw){ alert('No hay guardado.'); return; }
+  alert('Hay una sesión guardada. En este mockup la persistencia completa de radios se ampliará en la versión Build; el informe usa el estado actual de la pantalla.');
+}
+function clearAll(){ if(confirm('¿Limpiar todo?')) location.reload(); }
+
+function buildReport(){
+  const R=results();
+  const id=idData();
+  const lines=[];
+  lines.push('INFORME DE ESCALAS — CUIDADOS PALIATIVOS');
+  lines.push('Herramienta de apoyo clínico. No reemplaza el juicio profesional.');
+  lines.push('');
+  lines.push(`Fecha: ${id.fecha||'—'}`);
+  lines.push(`Paciente: ${id.nom||'—'} · Doc. ${id.doc||'—'} · Edad ${id.edad||'—'} · Sexo ${id.sexo||'—'}`);
+  if(id.dx) lines.push(`Diagnóstico principal: ${id.dx}`);
+  lines.push(`Evaluador: ${id.prof||'—'} (${id.esp||'—'}) · Matrícula ${id.mat||'—'}`);
+  lines.push('');
+  lines.push('RESUMEN');
+  const pick=k=> R[k] && R[k].status==='ok' ? R[k].text : (R[k] && R[k].status==='no evaluable' ? 'No evaluable.' : (R[k] && R[k].text? R[k].text : 'No administrada.'));
+  lines.push('Necesidades paliativas: ' + [pick('necpal'), pick('spict'), pick('hexcom')].join(' '));
+  lines.push('Funcionalidad: ' + [pick('ecog'), pick('kps'), pick('barthel'), pick('lawton'), pick('katz')].join(' '));
+  lines.push('Pronóstico: ' + [pick('ppi'), pick('pap')].join(' '));
+  lines.push('Cognición: ' + [pick('mmse'), pick('cam'), pick('gds'), pick('mdas')].join(' '));
+  lines.push('');
+  lines.push('DETALLE POR ESCALA');
+  const order=[['NECPAL 4.0','necpal'],['SPICT-ES','spict'],['HexCom-Clin','hexcom'],['ECOG','ecog'],['Karnofsky','kps'],['Barthel','barthel'],['Lawton y Brody','lawton'],['Katz','katz'],['PPI','ppi'],['PaP','pap'],['Mini-Mental','mmse'],['CAM','cam'],['GDS','gds'],['MDAS','mdas']];
+  order.forEach(([n,k])=>{
+    const note=(document.getElementById('note-'+k)||{}).value;
+    lines.push(`• ${n}: ${pick(k)}${note? ' Nota: '+note:''}`);
+  });
+  lines.push('');
+  lines.push('Fuentes oficiales listadas en la sección Fuentes de la herramienta.');
+  const text=lines.join('\n');
+  document.getElementById('view-home').classList.add('hidden');
+  document.getElementById('view-mod').classList.add('hidden');
+  document.getElementById('view-sources').classList.add('hidden');
+  const v=document.getElementById('view-report');
+  v.classList.remove('hidden');
+  v.innerHTML = `<button class="btn navback" onclick="goHome()">← Volver</button>
+    <section class="card">
+      <div class="row"><h2 style="margin:0">Reporte clínico</h2>
+        <div><button class="btn" onclick="copyRep()">Copiar</button>
+        <button class="btn" onclick="window.print()">Imprimir</button></div></div>
+      <pre class="report" id="rep">${text.replace(/</g,'&lt;')}</pre>
+    </section>`;
+  window._rep=text;
+}
+function copyRep(){ navigator.clipboard.writeText(window._rep||''); alert('Copiado al portapapeles.'); }
+
+function showSources(){
+  ['view-home','view-mod','view-report'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  const v=document.getElementById('view-sources');
+  v.classList.remove('hidden');
+  v.innerHTML=`<button class="btn navback" onclick="goHome()">← Volver</button>
+  <section class="card"><h2>Fuentes oficiales utilizadas</h2>
+  <p>Base local: Tedeschi V, Vazquez A, Bunge S, Peirano G. <i>Conceptos generales de Cuidados Paliativos</i>. Material de lectura módulo 1 NBCP. Instituto Nacional del Cáncer / Ministerio de Salud Argentina. Cada escala también cita el paper original al pie del formulario.</p>
+  <ol>
+    <li><b>NECPAL 4.0</b> — Gómez-Batiste et al., 2021. Parámetros: Anexo 1 del material INC.</li>
+    <li><b>SPICT-ES</b> — Anexo 2 INC + Fachado et al., Rev Saude Publica 2018;52:3. Programa: spict.org.uk</li>
+    <li><b>HexCom-Clin® 2018</b> — 18 subáreas. Anexo 4 INC. Busquet-Duran / PADES Granollers.</li>
+    <li><b>ECOG</b> — Oken 1982. Redacción: Anexo 8 INC.</li>
+    <li><b>Karnofsky</b> — Karnofsky 1949. Redacción: Anexo 7 INC.</li>
+    <li><b>Barthel</b> — Mahoney y Barthel 1965. Ítems e interpretación: Anexo 9 INC.</li>
+    <li><b>Lawton y Brody</b> — Gerontologist 1969. <i>No figura en este PDF.</i></li>
+    <li><b>Katz</b> — JAMA 1963. <i>No figura en este PDF.</i></li>
+    <li><b>PPI</b> — Morita 1999. <i>No figura en este PDF.</i></li>
+    <li><b>PaP</b> — Pirovano/Maltoni 1999. <i>No figura en este PDF.</i></li>
+    <li><b>MMSE</b> — Folstein 1975. Copyright PAR. El PDF usa GDS/FAST y MDAS, no Mini-Mental.</li>
+    <li><b>CAM</b> — Inouye 1990. Preguntas: Anexo 14 INC.</li>
+    <li><b>GDS</b> — Reisberg 1982. Anexo 11 INC.</li>
+    <li><b>MDAS</b> — Lawlor et al. Cancer 2000. Anexo 13 INC. Corte ≥7.</li>
+  </ol>
+  <div class="warnbox">Este PDF no trae Lawton, Katz, PPI, PaP ni Mini-Mental: quedan con fuente primaria. HexCom quedó en Clin (18 subáreas) con guía de niveles en cada ítem. FAST e IDC-Pal siguen afuera salvo que los pidas.</div>
+  </section>`;
+}
+
+refreshBars();
+</script>
+</body>
+</html>
