@@ -69,6 +69,7 @@
   .wrap{max-width:920px;margin:0 auto;padding:8px 16px 168px}
   .card{background:var(--surface);border:0;border-radius:var(--radius);padding:20px;margin-bottom:12px;box-shadow:var(--shadow)}
   h2{margin:0 0 8px;font-size:1.2rem;font-weight:600;letter-spacing:-.03em;line-height:1.25}
+  h2.section-title{margin:18px 4px 10px}
   h3{margin:0 0 4px;font-size:1rem;font-weight:600}
   .kicker{font-size:.75rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600}
   .muted{color:var(--muted);font-weight:400}
@@ -280,7 +281,7 @@
     </figure>
   </div>
   <div class="card">
-    <h2>¿Qué visita es esta?</h2>
+    <h2>Evaluación según tipo de visita</h2>
     <p class="muted" style="margin:0 0 8px">Un atajo abre solo lo que suele hacer falta. El resto queda disponible.</p>
     <div class="shortcuts">
       <button class="short" onclick="openVisit('primera')"><b>Primera vez</b><span>NECPAL, PPS, Barthel, ESAS, fase</span></button>
@@ -289,6 +290,7 @@
       <button class="short" onclick="openVisit('techo')"><b>Techo terapéutico</b><span>PPS, PaP o PPI, planificación</span></button>
     </div>
   </div>
+  <h2 class="section-title">Escalas agrupadas por categorías</h2>
   <div class="mods" id="modgrid"></div>
   <div class="card" id="saved-card"></div>
 </div>
@@ -316,7 +318,7 @@ const MODS = [
   {id:'cog', title:'Cognición', color:'#b7a4c8', tools:['cam','mdas','mmse','gds'], blurb:'CAM para cribado. MDAS si hay delirium. GDS si hay demencia.'},
   {id:'care', title:'Cuidador', color:'#c49a7c', tools:['zarit'], blurb:'Carga. En domicilio cambia la conducta más que otra escala.'},
   {id:'plan', title:'Planificación', color:'#8eabc4', tools:['plan'], blurb:'Representante, lugar de muerte, reanimación. Párrafo para pegar.'},
-  {id:'opio', title:'Opioides', color:'#d2a36a', tools:['opio'], blurb:'Rotación breve. La calculadora completa abre aparte.'},
+  {id:'opio', title:'Opioides', color:'#d2a36a', tools:['opio'], blurb:'Abre la calculadora de opioides.'},
   {id:'dep', title:'Desprescripción', color:'#b7a4c8', tools:['dep'], blurb:'Apartado reservado. Todavía sin instrumento.'}
 ];
 const NAMES = {
@@ -466,6 +468,15 @@ function renderHome(){
     const tools = m.tools.filter(t=>t!=='dep');
     const done = tools.filter(t=>state[t]).length;
     const full = tools.length && done===tools.length;
+    if(m.id==='opio'){
+      return `<button type="button" class="mod" onclick="location.href='https://leandroantonielli.github.io/CalculadoraOpioides/'">
+      <div class="bar" style="background:${m.color}"></div>
+      <h3>${m.title}</h3>
+      <p class="muted" style="margin:0">${m.blurb}</p>
+      <ul><li>Calculadora de opioides</li></ul>
+      <span class="chip">abrir</span>
+    </button>`;
+    }
     return `<button type="button" class="mod${full?' done':''}" onclick="openMod('${m.id}')">
       <div class="bar" style="background:${m.color}"></div>
       <h3>${m.title}</h3>
@@ -493,15 +504,19 @@ function openMod(modId, only){
     const sec = document.getElementById('sc-'+t);
     sec?.classList.add('open');
     sec?.querySelector('.scale-toggle')?.setAttribute('aria-expanded','true');
+    const chip = sec?.querySelector('.chip');
+    if(chip && chip.textContent==='abrir') chip.textContent = 'cerrar';
   });
 }
 function toggleScale(btn){
   const sec = btn.closest('.scale');
   const open = sec.classList.toggle('open');
   btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  const chip = btn.querySelector('.chip');
+  if(chip && chip.textContent!=='listo') chip.textContent = open ? 'cerrar' : 'abrir';
 }
 function toolCard(id){
-  return `<section class="scale" id="sc-${id}"><h3 class="scale-h"><button type="button" class="scale-toggle" aria-expanded="false" aria-controls="bd-${id}" onclick="toggleScale(this)"><span><b>${NAMES[id]}</b><span class="muted hint">${hint(id)}</span></span><span class="chip" id="st-${id}">${state[id]?'con datos':'abrir'}</span></button></h3><div class="body" id="bd-${id}"></div></section>`;
+  return `<section class="scale" id="sc-${id}"><h3 class="scale-h"><button type="button" class="scale-toggle" aria-expanded="false" aria-controls="bd-${id}" onclick="toggleScale(this)"><span><b>${NAMES[id]}</b><span class="muted hint">${hint(id)}</span></span><span class="chip" id="st-${id}">${state[id]&&interpret(id,state[id])?'listo':'abrir'}</span></button></h3><div class="body" id="bd-${id}"></div></section>`;
 }
 function hint(id){
   return ({
@@ -534,15 +549,26 @@ function bind(id){
   const el = $('bd-'+id);
   el.innerHTML = forms[id]();
   restore(id);
-  el.querySelectorAll('input,select,textarea').forEach(n=>n.addEventListener('input', ()=>collect(id)));
+  el.querySelectorAll('input,select,textarea').forEach(n=>n.addEventListener('input', ()=>{
+    if(id==='dolor' && n.dataset.k==='nrs') n.dataset.touched = '1';
+    collect(id);
+  }));
+  if(id==='dolor') prefillDolor(el);
   collect(id, true);
+}
+function prefillDolor(el){
+  const pain = num(state.esas && state.esas.Dolor);
+  const n = el.querySelector('[data-k=nrs]');
+  if(!n || pain==null || n.dataset.touched==='1') return;
+  const own = state.dolor && state.dolor.nrs;
+  if(own==null || own==='' || own==='0') n.value = String(pain);
 }
 function field(id, label, type, extra=''){
   const v = (state[id] && state[id][extra||label]) || '';
   return `<label class="muted" style="font-size:12px">${label}<input data-k="${extra||label}" ${type} value="${esc(v)}"></label>`;
 }
 function esc(s){
-  return String(s??'').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"').replace(/'/g,'&#39;');
+  return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 const forms = {
   necpal(){
@@ -645,6 +671,7 @@ const forms = {
   esas(){ return ['Dolor','Cansancio','Náuseas','Depresión','Ansiedad','Somnolencia','Apetito','Malestar','Falta de aire','Otro'].map(s=>`<div class="esas"><span class="esas-name">${s}</span><input type="range" min="0" max="10" step="1" value="0" data-k="${s}"><b>0</b></div>`).join('') + `<input data-k="otrotxt" placeholder="Si marcaste Otro, ¿cuál?" style="margin-top:8px"><div class="src">ESAS-r. Edmonton. 0 nada, 10 lo peor posible. Apetito: 0 mejor, 10 peor. El puntaje sigue siendo entero.</div>`; },
   dolor(){ return `
     <div class="esas"><span>Intensidad ahora</span><input type="range" min="0" max="10" value="0" data-k="nrs"><b>0</b></div>
+    <p class="muted" style="margin:0 0 8px">Si ya marcaste dolor en el ESAS, este número se copia solo.</p>
     <b>Componente neuropático (entrevista)</b>
     ${['Quemazón','Frío doloroso','Descargas','Hormigueo','Pinchazos','Adormecimiento','Picazón'].map(t=>`<label class="opt"><input type="checkbox" data-k="${t}"> ${t}</label>`).join('')}
     <div class="src">Intensidad numérica. DN4, porción de entrevista (Bouhassira 2005): ≥3 de 7 sugiere componente neuropático. No reemplaza el examen.</div>`; },
@@ -701,8 +728,20 @@ function collect(id, silent){
   if(!root.querySelector('.scorebox')){ box.className='scorebox'; root.appendChild(box); }
   const txt = interpret(id, d);
   box.innerHTML = txt ? `<b>${txt}</b>` : '<span class="muted">Sin resultado todavía.</span>';
-  const st = $('st-'+id); if(st) st.textContent = txt ? 'listo' : 'abrir';
+  const st = $('st-'+id);
+  if(st){
+    const open = root.closest('.scale')?.classList.contains('open');
+    st.textContent = txt ? 'listo' : (open ? 'cerrar' : 'abrir');
+  }
   root.querySelectorAll('input[type=range]').forEach(n=>{ const b=n.nextElementSibling; if(b&&b.tagName==='B') b.textContent=n.value; n.style.setProperty('--p', ((Number(n.value)||0)/10*100)+'%'); });
+  if(id==='esas'){
+    const dolor = $('bd-dolor');
+    const slider = dolor && dolor.querySelector('[data-k=nrs]');
+    if(slider && slider.dataset.touched!=='1'){
+      slider.value = d.Dolor || '0';
+      collect('dolor', true);
+    }
+  }
 }
 function num(v){ const n = parseFloat(String(v??'').replace(',','.')); return Number.isFinite(n)?n:null; }
 function interpret(id, d){
@@ -781,8 +820,13 @@ function interpret(id, d){
   }
   if(id==='dolor'){
     const n = Object.keys(d).filter(k=>k!=='nrs'&&d[k]).length;
-    if((d.nrs==null||d.nrs==='0') && !n) return '';
-    return `Dolor ${d.nrs||0}/10${n?`. Entrevista neuropática ${n}/7${n>=3?', sugiere componente neuropático':''}`:''}.`;
+    const esasN = state.esas ? num(state.esas.Dolor) : null;
+    const nrs = (d.nrs!=null && d.nrs!=='') ? String(d.nrs) : (esasN!=null ? String(esasN) : '0');
+    if((nrs==='0') && !n) return '';
+    const same = esasN!=null && String(esasN)===nrs;
+    if(same && !n) return '';
+    if(same) return `Entrevista neuropática ${n}/7${n>=3?', sugiere componente neuropático':''}. Intensidad ${nrs}/10, tomada del ESAS.`;
+    return `Dolor ${nrs}/10${n?`. Entrevista neuropática ${n}/7${n>=3?', sugiere componente neuropático':''}`:''}.`;
   }
   if(id==='rass') return d.rass!=null && d.rass!==''?`RASS ${d.rass}.`:'';
   if(id==='cam'){
