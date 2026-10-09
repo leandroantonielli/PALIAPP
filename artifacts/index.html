@@ -74,7 +74,10 @@
   h3{margin:0 0 4px;font-size:1rem;font-weight:600}
   .kicker{font-size:.75rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600}
   .muted{color:var(--muted);font-weight:400}
-  .plate{display:block}
+  .meta-fields{display:flex;flex-direction:column;gap:2px}
+  .meta-fields input,.meta-fields input[type=datetime-local]{width:100%;min-width:0}
+  .desk-side .actions{display:flex;flex-direction:column;align-items:stretch}
+  .desk-side .actions .btn{width:100%}
   .plate figcaption{display:none}
   .plate img{width:100%;height:200px;object-fit:cover;border-radius:16px;display:block}
   .shortcuts{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
@@ -385,7 +388,7 @@ function renderMeta(){
   const m = loadMeta();
   const when = m.when || new Date().toISOString().slice(0,16);
   $('meta-card').innerHTML = `<p class="kicker">Esta visita</p>
-    <div class="grid2">
+    <div class="meta-fields">
       <label>Fecha y hora<input id="meta-when" type="datetime-local" value="${esc(when)}"></label>
       <label>Identificador local<input id="meta-id" placeholder="cama, iniciales, no va al texto" value="${esc(m.localId||'')}"></label>
     </div>
