@@ -9,183 +9,212 @@
 <title>PALIAPP</title>
 <style>
   :root{
-    --bg:#f4f4f5;
+    --bg:#f4f4f6;
     --surface:#ffffff;
-    --ink:#18181b;
-    --muted:#3f3f46;
-    --line:#e4e4e7;
-    --soft:#f4f4f5;
-    --preview:#3f3f46;
+    --ink:#1c1c1e;
+    --muted:#636366;
+    --soft:#f4f4f6;
+    --preview:#3a3a3c;
     --accent:#c2410c;
     --accent-ink:#fff;
-    --ring:rgba(194,65,12,.28);
-    --shadow:0 1px 2px rgba(24,24,27,.04), 0 10px 28px rgba(24,24,27,.06);
+    --ring:rgba(196,92,56,.28);
+    --shadow:0 1px 1px rgba(28,28,30,.04), 0 8px 24px rgba(28,28,30,.05);
     --radius:16px;
-    --font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    --font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   }
   @media (prefers-color-scheme: dark){
     :root{
-      --bg:#18181b;
-      --surface:#27272a;
-      --ink:#fafafa;
-      --muted:#d4d4d8;
-      --line:#3f3f46;
-      --soft:#3f3f46;
-      --preview:#e4e4e7;
-      --accent:#fb923c;
-      --accent-ink:#18181b;
-      --ring:rgba(251,146,60,.35);
-      --shadow:0 1px 2px rgba(0,0,0,.35), 0 12px 32px rgba(0,0,0,.28);
+      --bg:#121212;
+      --surface:#1c1c1e;
+      --ink:#f5f5f7;
+      --muted:#aeaeb2;
+      --soft:#2c2c2e;
+      --preview:#d1d1d6;
+      --accent:#f0a07a;
+      --accent-ink:#1c1c1e;
+      --ring:rgba(240,160,122,.35);
+      --shadow:0 1px 1px rgba(0,0,0,.35), 0 10px 28px rgba(0,0,0,.28);
     }
   }
   *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.45 var(--font);-webkit-font-smoothing:antialiased}
   button,input,select,textarea{font:inherit;color:inherit}
   button{cursor:pointer}
   header.app{
     position:sticky;top:0;z-index:30;
-    background:color-mix(in srgb, var(--surface) 88%, transparent);
-    backdrop-filter:blur(16px);
-    box-shadow:0 1px 0 var(--line);
+    background:color-mix(in srgb, var(--bg) 72%, transparent);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
     display:flex;align-items:center;gap:12px;padding:12px 16px;
   }
-  .logo{width:40px;height:40px;border-radius:12px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700;font-size:14px;letter-spacing:-.03em;flex:0 0 auto}
-  header h1{margin:0;font-size:1.25rem;font-weight:700;letter-spacing:-.03em;line-height:1.2}
+  .logo{width:40px;height:40px;border-radius:14px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:600;font-size:14px;letter-spacing:-.03em;flex:0 0 auto}
+  header h1{margin:0;font-size:1.2rem;font-weight:600;letter-spacing:-.03em;line-height:1.2}
   header p{margin:2px 0 0;color:var(--muted);font-size:.8125rem;font-weight:400}
   .grow{flex:1}
   .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .btn{
-    border:0;background:var(--soft);color:var(--ink);border-radius:12px;
-    padding:0 14px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;
+    border:0;background:var(--surface);color:var(--ink);border-radius:14px;
+    padding:0 14px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;
     font-weight:600;font-size:.9375rem;white-space:nowrap;
-    transition:background .15s ease, transform .12s ease;
+    box-shadow:var(--shadow);
+    transition:transform .12s ease, background .15s ease;
   }
-  .btn:hover{background:color-mix(in srgb, var(--ink) 8%, var(--soft))}
   .btn:active{transform:scale(.98)}
   .btn:focus-visible,.short:focus-visible,.mod:focus-visible,.scale-toggle:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
     outline:none;box-shadow:0 0 0 3px var(--ring);
   }
-  .btn-primary{background:var(--accent);color:var(--accent-ink)}
-  .btn-primary:hover{background:color-mix(in srgb, var(--accent) 88%, #000)}
-  .wrap{max-width:980px;margin:0 auto;padding:16px 16px 140px}
-  .card{background:var(--surface);border:0;border-radius:var(--radius);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
-  h2{margin:0 0 6px;font-size:1.25rem;font-weight:700;letter-spacing:-.03em;line-height:1.25}
-  h3{margin:0 0 4px;font-size:1rem;font-weight:600;letter-spacing:-.02em}
-  .kicker{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .btn-primary{background:var(--accent);color:var(--accent-ink);box-shadow:none}
+  .wrap{max-width:920px;margin:0 auto;padding:8px 16px 168px}
+  .card{background:var(--surface);border:0;border-radius:var(--radius);padding:20px;margin-bottom:12px;box-shadow:var(--shadow)}
+  h2{margin:0 0 8px;font-size:1.2rem;font-weight:600;letter-spacing:-.03em;line-height:1.25}
+  h3{margin:0 0 4px;font-size:1rem;font-weight:600}
+  .kicker{font-size:.75rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600}
   .muted{color:var(--muted);font-weight:400}
-  .plate{display:grid;grid-template-columns:1fr;gap:14px;align-items:center}
-  .plate img{width:100%;height:168px;object-fit:cover;border-radius:14px;display:block}
-  .shortcuts{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
+  #plate-cap{display:none !important}
+  .plate{display:flex;flex-direction:column;gap:12px}
+  .plate figcaption{order:-1}
+  .plate figcaption h2{margin:0}
+  .plate img{width:100%;height:180px;object-fit:cover;border-radius:16px;display:block}
+  .shortcuts{display:grid;grid-template-columns:1fr;gap:10px;margin-top:4px}
   .short{
-    display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;
-    text-align:left;width:100%;min-height:72px;border:0;border-radius:14px;padding:14px 16px;
-    background:color-mix(in srgb, var(--accent) 10%, var(--surface));
-    box-shadow:none;color:var(--ink);
+    display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;
+    text-align:left;width:100%;min-height:72px;border:0;border-radius:16px;padding:16px 18px;
+    background:var(--surface);color:var(--ink);box-shadow:var(--shadow);
   }
-  .short b{font-size:1rem;font-weight:700}
+  .short b{font-size:1rem;font-weight:600}
   .short span{color:var(--muted);font-size:.8125rem;line-height:1.35;font-weight:400}
-  .short:nth-child(1){background:color-mix(in srgb, #c2410c 12%, var(--surface))}
-  .short:nth-child(2){background:color-mix(in srgb, #d97706 14%, var(--surface))}
-  .short:nth-child(3){background:color-mix(in srgb, #2563eb 12%, var(--surface))}
-  .short:nth-child(4){background:color-mix(in srgb, #7c3aed 12%, var(--surface))}
+  .short:nth-child(1){background:color-mix(in srgb, #e7b7b0 42%, var(--surface))}
+  .short:nth-child(2){background:color-mix(in srgb, #f3ddb0 55%, var(--surface))}
+  .short:nth-child(3){background:color-mix(in srgb, #c5d7ea 48%, var(--surface))}
+  .short:nth-child(4){background:color-mix(in srgb, #ddd0ea 48%, var(--surface))}
   .short:active{transform:scale(.99)}
   .mods{display:grid;grid-template-columns:1fr;gap:12px}
   .mod{
     display:flex;flex-direction:column;align-items:stretch;text-align:left;width:100%;
-    min-height:0;padding:18px 18px 16px 20px;border:0;border-radius:16px;
+    padding:20px;border:0;border-radius:16px;
     background:var(--surface);box-shadow:var(--shadow);position:relative;cursor:pointer;
     font:inherit;color:inherit;
   }
   .mod:active{transform:scale(.995)}
-  .mod .bar{position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:99px}
-  .mod ul{margin:8px 0 0;padding:0 0 0 16px;color:var(--muted);font-size:.875rem;font-weight:400}
-  .mod p{margin:0}
+  .mod .bar{position:absolute;left:10px;top:18px;bottom:18px;width:4px;border-radius:99px}
+  .mod ul{margin:8px 0 0;padding:0 0 0 18px;color:var(--muted);font-size:.875rem;font-weight:400}
+  .mod p{margin:0;font-weight:400}
   .chip{display:inline-flex;align-items:center;align-self:flex-start;height:26px;margin-top:10px;border-radius:99px;padding:0 10px;background:var(--soft);color:var(--ink);font-size:.75rem;font-weight:600}
-  .mod.done{box-shadow:0 0 0 2px var(--accent), var(--shadow)}
-  .meter{height:4px;background:var(--soft);border-radius:99px;margin-top:12px;overflow:hidden}
+  .mod.done{box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 70%, transparent), var(--shadow)}
+  .meter{height:6px;background:var(--soft);border-radius:99px;margin-top:14px;overflow:hidden}
   .meter i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .25s ease}
-  .scale{border:0;border-radius:14px;margin:10px 0;overflow:hidden;background:var(--soft)}
+  .scale{border:0;border-radius:16px;margin:10px 0;overflow:hidden;background:var(--soft)}
   .scale>header,.scale-toggle{
-    padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;
+    padding:16px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;
     cursor:pointer;background:transparent;width:100%;border:0;font:inherit;color:inherit;text-align:left;min-height:56px;
   }
-  .scale-toggle b,.scale>header b{font-weight:700;font-size:1rem}
-  .scale>header:hover,.scale-toggle:hover{background:color-mix(in srgb, var(--ink) 4%, transparent)}
+  .scale-toggle b,.scale>header b{font-weight:600;font-size:1rem}
   .scale .hint{display:block;font-size:.8125rem;font-weight:400;color:var(--muted)}
-  .scale .body{padding:0 16px;max-height:0;overflow:hidden;border-top:1px solid transparent;transition:max-height .28s ease, padding .28s ease}
+  .scale .body{padding:0 16px;max-height:0;overflow:hidden;transition:max-height .28s ease, padding .28s ease}
   .scale.open{background:var(--surface);box-shadow:var(--shadow)}
-  .scale.open .body{display:block;max-height:4200px;padding:8px 16px 16px;border-top-color:var(--line)}
+  .scale.open .body{display:block;max-height:4200px;padding:4px 16px 16px}
   footer.sticky{
-    position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb, var(--surface) 92%, transparent);
-    backdrop-filter:blur(16px);box-shadow:0 -1px 0 var(--line);
-    display:flex;gap:8px;align-items:flex-end;
-    padding:8px 12px calc(10px + env(safe-area-inset-bottom));z-index:30;
+    position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));
+    background:color-mix(in srgb, var(--surface) 78%, transparent);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-radius:22px;box-shadow:var(--shadow);
+    display:flex;gap:8px;align-items:center;
+    padding:8px 8px 8px 14px;z-index:30;
   }
-  footer.sticky .preview{flex:1;min-width:0;font-size:.875rem;color:var(--preview);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:12px 4px;font-weight:400}
-  footer.sticky.open{align-items:stretch;flex-wrap:wrap}
-  footer.sticky.open .preview{white-space:pre-wrap;overflow:auto;max-height:38vh;flex-basis:100%;order:2}
-  .dock-expand,.thumb{min-height:48px}
-  .thumb{min-width:108px}
-  .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 16px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:40}
+  footer.sticky .preview{flex:1;min-width:0;font-size:.875rem;font-weight:400;color:var(--preview);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:8px 0}
+  footer.sticky.open{align-items:stretch;flex-wrap:wrap;padding:12px}
+  footer.sticky.open .preview{white-space:pre-wrap;overflow:auto;max-height:34vh;flex-basis:100%;order:2}
+  .dock-expand{min-height:48px;min-width:48px;box-shadow:none;background:transparent}
+  .thumb{min-height:52px;min-width:112px;padding:0 18px;border-radius:16px;font-size:1rem}
+  .toast{position:fixed;left:50%;bottom:108px;transform:translateX(-50%);background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 16px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:40}
   .toast.on{opacity:1}
   .sec-copy{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
-  .plate-frame{position:relative;min-height:168px;border-radius:14px;overflow:hidden;background:var(--soft)}
-  .plate-fallback{display:none;min-height:168px;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--muted);background:color-mix(in srgb, var(--accent) 10%, var(--surface))}
+  .plate-frame{position:relative;min-height:180px;border-radius:16px;overflow:hidden;background:var(--soft)}
+  .plate-fallback{display:none;min-height:180px;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--muted);background:var(--soft)}
   .plate-frame.failed img{display:none}
   .plate-frame.failed .plate-fallback{display:flex}
   .opt{
     display:flex;flex-direction:row;gap:12px;align-items:center;
-    padding:12px 14px;border:0;border-radius:12px;margin:6px 0;min-height:48px;
-    background:var(--soft);cursor:pointer;font-weight:400;
+    padding:14px 16px;border:0;border-radius:16px;margin:8px 0;min-height:48px;
+    background:var(--soft);cursor:pointer;font-weight:400;box-shadow:none;align-items:flex-start;
   }
-  .opt input{margin:0;flex:0 0 auto}
-  .opt:has(input:checked){background:color-mix(in srgb, var(--accent) 14%, var(--surface));box-shadow:inset 0 0 0 1.5px var(--accent)}
-  .grid2{display:grid;grid-template-columns:1fr;gap:8px 12px;align-items:center;margin:6px 0}
-  .grid2>span{min-height:44px;display:flex;align-items:center;font-weight:500}
-  .scorebox{background:color-mix(in srgb, var(--accent) 10%, var(--surface));border-radius:12px;padding:12px 14px;margin-top:12px;font-weight:600}
+  .opt input{margin:3px 0 0;flex:0 0 auto}
+  .opt:has(input:checked){background:color-mix(in srgb, var(--accent) 16%, var(--surface));box-shadow:var(--shadow)}
+  .grid2{display:grid;grid-template-columns:1fr;gap:8px;align-items:center;margin:8px 0}
+  .grid2>span{min-height:48px;display:flex;align-items:center;font-weight:400}
+  .scorebox{background:color-mix(in srgb, var(--accent) 12%, var(--surface));border-radius:16px;padding:14px 16px;margin-top:12px;font-weight:600}
   .hidden{display:none !important}
   input,select,textarea{
-    border:0;border-radius:12px;padding:12px 14px;background:var(--soft);width:100%;min-height:48px;
-    transition:box-shadow .15s ease, background .15s ease;
+    border:0;border-radius:14px;padding:12px 14px;background:var(--soft);width:100%;min-height:48px;
+    box-shadow:none;
   }
-  textarea{min-height:96px;resize:vertical;line-height:1.45}
+  textarea{min-height:96px;resize:vertical;line-height:1.45;font-weight:400}
   input:focus,select:focus,textarea:focus{outline:none;background:var(--surface);box-shadow:0 0 0 3px var(--ring)}
-  input[type=checkbox],input[type=radio]{width:1.15rem;height:1.15rem;min-height:1.15rem;padding:0;accent-color:var(--accent);box-shadow:none;background:transparent}
+  input[type=checkbox],input[type=radio]{width:1.2rem;height:1.2rem;min-height:1.2rem;padding:0;accent-color:var(--accent);box-shadow:none;background:transparent}
   input[type=range]{width:100%;min-height:44px;padding:0;background:transparent;box-shadow:none;accent-color:var(--accent)}
+  .esas input[type=range]{
+    -webkit-appearance:none;appearance:none;height:36px;min-height:36px;margin:0;
+    background:transparent;touch-action:pan-y;cursor:pointer;
+  }
+  .esas input[type=range]::-webkit-slider-runnable-track{
+    height:8px;border-radius:99px;
+    background:linear-gradient(90deg,#c2410c var(--p,0%), #e4e4e7 var(--p,0%));
+  }
+  .esas input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:30px;height:30px;margin-top:-11px;border-radius:50%;
+    background:#fff;border:0;box-shadow:0 2px 8px rgba(28,28,30,.22), 0 0 0 3px #c2410c;
+  }
+  .esas input[type=range]::-moz-range-track{height:8px;border:0;border-radius:99px;background:#e4e4e7}
+  .esas input[type=range]::-moz-range-progress{height:8px;border-radius:99px;background:#c2410c}
+  .esas input[type=range]::-moz-range-thumb{width:30px;height:30px;border:0;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(28,28,30,.22), 0 0 0 3px #c2410c}
+  .esas-name{
+    order:2;font-weight:600;font-size:.8125rem;line-height:1.2;text-align:center;
+    color:#6b2e12;background:linear-gradient(180deg,#f8d7c4,#e7b08a);
+    border-radius:12px;padding:8px 10px;min-width:6.6rem;max-width:8.2rem;
+    box-shadow:0 2px 6px rgba(194,65,12,.2);
+  }
   input[type=file]{background:transparent;box-shadow:none;padding:0}
-  label{display:flex;flex-direction:column;gap:6px;margin:10px 0;font-size:.875rem;font-weight:600;color:var(--ink)}
-  label.opt{font-weight:400;font-size:1rem}
-  .esas{display:grid;grid-template-columns:1fr;gap:6px;align-items:center;margin:10px 0}
-  .esas b{font-weight:700;font-variant-numeric:tabular-nums}
-  .src{font-size:.8125rem;font-weight:400;color:var(--muted);background:var(--soft);border-radius:12px;padding:10px 12px;margin-top:12px}
-  .warnbox{background:color-mix(in srgb, #d97706 16%, var(--surface));color:#78350f;border-radius:12px;padding:12px 14px;margin:8px 0;font-size:.9375rem}
-  .okbox{background:color-mix(in srgb, #16a34a 14%, var(--surface));color:#14532d;border-radius:12px;padding:12px 14px;margin:8px 0}
-  .badbox{background:color-mix(in srgb, #dc2626 12%, var(--surface));color:#7f1d1d;border-radius:12px;padding:12px 14px;margin:8px 0}
-  pre.report{white-space:pre-wrap;background:var(--soft);border:0;border-radius:12px;padding:16px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.875rem;line-height:1.55}
-  .empty{border:0;border-radius:14px;padding:22px;background:var(--soft);color:var(--muted)}
+  label{display:flex;flex-direction:column;gap:6px;margin:12px 0;font-size:.875rem;font-weight:600;color:var(--ink)}
+  label.opt{font-weight:400;font-size:1rem;margin:8px 0}
+  .esas{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;margin:14px 0}
+  .esas input[type=range]{order:1}
+  .esas b{order:3;min-width:1.4rem;text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+  .src{font-size:.8125rem;font-weight:400;color:var(--muted);background:var(--soft);border-radius:14px;padding:12px 14px;margin-top:12px}
+  .warnbox{background:color-mix(in srgb, #f3ddb0 70%, var(--surface));color:#6b4e16;border-radius:16px;padding:14px 16px;margin:8px 0;font-size:.9375rem;font-weight:400}
+  .okbox{background:color-mix(in srgb, #cfe6d4 70%, var(--surface));color:#245c32;border-radius:16px;padding:14px 16px;margin:8px 0;font-weight:400}
+  .badbox{background:color-mix(in srgb, #f3cfc9 70%, var(--surface));color:#7a2433;border-radius:16px;padding:14px 16px;margin:8px 0;font-weight:400}
+  pre.report{white-space:pre-wrap;background:var(--soft);border:0;border-radius:16px;padding:16px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.875rem;line-height:1.55}
+  .empty{border:0;border-radius:16px;padding:22px;background:var(--soft);color:var(--muted);font-weight:400}
   .navback{margin-bottom:12px}
+  details{margin:8px 0}
   details summary{cursor:pointer;color:var(--accent);font-weight:600}
   @media (max-width:719px){
-    header.app{flex-wrap:wrap;align-items:center}
+    header.app{flex-wrap:wrap}
     header.app .grow{display:none}
     header.app .actions{width:100%}
-    header.app .actions .btn{flex:1 1 0;padding:0 8px;font-size:.8125rem}
+    header.app .actions .btn{flex:1 1 0;padding:0 8px;font-size:.8125rem;box-shadow:none;background:var(--surface)}
+    header.app .actions .btn-primary{background:var(--accent)}
   }
-    .shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  @media (min-width:720px){
+    .shortcuts{grid-template-columns:1fr 1fr}
     .mods{grid-template-columns:1fr 1fr}
-    .plate{grid-template-columns:240px 1fr}
     .grid2{grid-template-columns:minmax(0,1fr) minmax(160px,240px)}
-    .esas{grid-template-columns:148px minmax(0,1fr) 28px}
-    .esas b{text-align:right}
   }
   @media (min-width:980px){
     .shortcuts{grid-template-columns:repeat(4,minmax(0,1fr))}
   }
   @media (prefers-color-scheme: dark){
-    .warnbox{color:#fde68a}
-    .okbox{color:#bbf7d0}
-    .badbox{color:#fecaca}
-    .btn-primary:hover{background:color-mix(in srgb, var(--accent) 86%, #fff)}
+    .warnbox{color:#f6e2b3}
+    .okbox{color:#c8ecd2}
+    .badbox{color:#f6c9c9}
+    .short:nth-child(1){background:color-mix(in srgb, #e7b7b0 22%, var(--surface))}
+    .short:nth-child(2){background:color-mix(in srgb, #f3ddb0 18%, var(--surface))}
+    .short:nth-child(3){background:color-mix(in srgb, #c5d7ea 18%, var(--surface))}
+    .short:nth-child(4){background:color-mix(in srgb, #ddd0ea 18%, var(--surface))}
+    .esas-name{color:#f8d7c4;background:linear-gradient(180deg,#6b3a28,#4a2418);box-shadow:0 2px 8px rgba(0,0,0,.35)}
+    .esas input[type=range]::-webkit-slider-runnable-track{background:linear-gradient(90deg,#f0a07a var(--p,0%), #3a3a3c var(--p,0%))}
+    .esas input[type=range]::-moz-range-track{background:#3a3a3c}
+    .esas input[type=range]::-moz-range-progress{background:#f0a07a}
+    .esas input[type=range]::-webkit-slider-thumb,.esas input[type=range]::-moz-range-thumb{box-shadow:0 2px 8px rgba(0,0,0,.4), 0 0 0 3px #f0a07a}
   }
 </style>
 </head>
@@ -446,7 +475,7 @@ function toolCard(id){
 }
 function hint(id){
   return ({
-    necpal:'Pregunta sorpresa y parámetros. Estadio si es positivo.',
+    necpal:'Pregunta sorpresa, demanda y seis parámetros. El estadio sale de cuántos dan positivos.',
     spict:'≥2 generales y ≥1 específico.',
     hexcom:'18 subáreas. El global es el máximo.',
     pps:'10–100. Se ofrece al PPI.',
@@ -486,12 +515,69 @@ function esc(s){
   return String(s??'').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"').replace(/'/g,'&#39;');
 }
 const forms = {
-  necpal(){ return `
-    <label class="opt"><span>¿Te sorprendería que este paciente muriera en los próximos 12 meses?</span></label>
+  necpal(){
+    const params = [
+      ['p1','1. Declive funcional','Deterioro funcional progresivo, sostenido y severo, no por un cuadro agudo reversible (Barthel, PPS o ECOG).'],
+      ['p2','2. Declive nutricional','Pérdida de peso involuntaria y sostenida, mayor al 10% en 6 meses, y/o albúmina menor a 2,5–3,0 g/dL.'],
+      ['p3','3. Síntomas persistentes y distrés','Dolor, disnea, astenia, anorexia o náuseas persistentes o refractarios, y/o distrés psicosocial severo.'],
+      ['p4','4. Multimorbilidad y vulnerabilidad social','Dos o más condiciones crónicas complejas o avanzadas, y/o aislamiento o vulnerabilidad social grave.'],
+      ['p5','5. Uso intensivo de recursos','Dos o más ingresos no programados, a urgencias o al hospital, en los últimos 6 meses.']
+    ];
+    const specs = [
+      ['EPOC y enfermedad respiratoria',[
+        ['ep1','Disnea de reposo o al mínimo esfuerzo (MRC 4–5 o NYHA III–IV)'],
+        ['ep2','FEV1 menor al 30% o restricción funcional severa'],
+        ['ep3','Hipoxemia crónica (pO2 menor a 55 mmHg o saturación menor a 88%) con oxígeno domiciliario'],
+        ['ep4','Hipercapnia (pCO2 mayor a 50 mmHg) o necesidad de VMNI'],
+        ['ep5','Tres o más exacerbaciones graves en el último año']
+      ]],
+      ['Insuficiencia cardíaca',[
+        ['ic1','NYHA III o IV'],
+        ['ic2','FEVI menor a 20–30%, o disfunción diastólica o valvular grave inoperable'],
+        ['ic3','Congestión o edemas refractarios, con diuréticos crecientes o endovenosos'],
+        ['ic4','Hipotensión sintomática (PAS menor a 90 mmHg) o síndrome cardiorrenal'],
+        ['ic5','Arritmias refractarias o síncope cardiogénico']
+      ]],
+      ['Demencia y neurodegenerativas',[
+        ['de1','FAST 7c o GDS 7: menos de 6 palabras con sentido al día'],
+        ['de2','No deambula solo: asistencia total para levantarse o sentarse'],
+        ['de3','Incontinencia urinaria y fecal permanente'],
+        ['de4','Disfagia severa o rechazo alimentario, sin ingesta calórica suficiente'],
+        ['de5','Infecciones a repetición en 6–12 meses (aspiración, pielonefritis, bacteriemia)'],
+        ['de6','Pérdida de peso mayor al 10% en 6 meses, o úlceras por presión grado 3–4']
+      ]],
+      ['Enfermedad renal avanzada',[
+        ['re1','ERC estadio 5: TFG menor a 15 ml/min, o creatinina mayor a 6–8 mg/dL'],
+        ['re2','Tratamiento renal conservador, sin entrar en diálisis'],
+        ['re3','Retiro o suspensión de diálisis por deterioro grave'],
+        ['re4','Síntomas urémicos de difícil control (prurito, náuseas, astenia, mioclonías)'],
+        ['re5','Sobrecarga hídrica refractaria o insuficiencia cardíaca urémica'],
+        ['re6','Desgaste proteico-energético o deterioro funcional progresivo']
+      ]],
+      ['Cirrosis',[
+        ['he1','Child-Pugh C o MELD mayor a 20, sin opción de trasplante'],
+        ['he2','Ascitis refractaria'],
+        ['he3','Encefalopatía hepática recurrente o crónica (grado II–IV)'],
+        ['he4','Síndrome hepatorrenal o hepatopulmonar'],
+        ['he5','Sangrado variceal recurrente, no controlable'],
+        ['he6','Coagulopatía grave (TP alargado más de 5 s o INR muy elevado) con ictericia progresiva']
+      ]]
+    ];
+    const specHtml = specs.map(([title, items])=>`<details><summary>${title}</summary>${items.map(([k,t])=>`<label class="opt"><input type="checkbox" data-k="${k}"> ${t}</label>`).join('')}</details>`).join('');
+    return `
+    <p class="kicker">Puerta de entrada</p>
+    <p class="muted" style="margin:0 0 8px">¿Le sorprendería que este paciente muriera en el próximo año?</p>
     <label class="opt"><input type="radio" name="sq" value="si"> No me sorprendería (pregunta positiva)</label>
     <label class="opt"><input type="radio" name="sq" value="no"> Sí me sorprendería</label>
-    ${['Caída del Barthel >30% en 6 meses','Pérdida de peso >10% en 6 meses','≥2 enfermedades crónicas avanzadas','≥2 ingresos urgentes en 12 meses','Uso de recursos complejo o refractariedad','Deterioro funcional, nutricional o cognitivo marcado'].map((t,i)=>`<label class="opt"><input type="checkbox" data-k="p${i}"> ${t}</label>`).join('')}
-    <div class="src">Gómez-Batiste y cols. NECPAL 4.0. Redacción alineada al material INC/MSAL, módulo 1.</div>`; },
+    <label class="opt"><input type="checkbox" data-k="demanda"> Demanda o necesidad expresada, del paciente, la familia o el equipo, de adecuar el esfuerzo o de atención paliativa</label>
+    <p class="kicker" style="margin-top:14px">Parámetros, si la pregunta sorpresa es positiva</p>
+    ${params.map(([k,t,d])=>`<label class="opt"><input type="checkbox" data-k="${k}"><span><b>${t}.</b> <span class="muted">${d}</span></span></label>`).join('')}
+    <p class="kicker" style="margin-top:14px">6. Indicadores específicos de enfermedad</p>
+    <p class="muted" style="margin:0 0 8px">Con uno solo de estos criterios, el parámetro 6 cuenta como positivo.</p>
+    <label class="opt"><input type="checkbox" data-k="onco"> Enfermedad oncológica en fase avanzada o metastásica</label>
+    ${specHtml}
+    <div class="src">NECPAL 4.0, Gómez-Batiste y cols., 2021. Estadiaje por parámetros positivos: 1–2 inicial, 3–4 intermedio, 5–6 avanzado (mediana menor a 3,5–4 meses).</div>`;
+  },
   spict(){ return `
     <b>Generales</b>
     ${['Deterioro funcional','Dependencia creciente','Dos o más internaciones no programadas','Bajo peso o pérdida de peso','Persona solicita cuidados paliativos o limita tratamiento'].map((t,i)=>`<label class="opt"><input type="checkbox" data-k="g${i}"> ${t}</label>`).join('')}
@@ -526,7 +612,7 @@ const forms = {
       <option value="0">Más de 12 semanas</option><option value="2">11–12 semanas</option><option value="2.5">7–10 semanas</option>
       <option value="4.5">5–6 semanas</option><option value="6">3–4 semanas</option><option value="8.5">1–2 semanas</option></select>
     <div class="src">Maltoni / Pirovano, 1999. Sin leucocitos o linfocitos no calcula. No usar en hemopatías.</div>`; },
-  esas(){ return ['Dolor','Cansancio','Náuseas','Depresión','Ansiedad','Somnolencia','Apetito','Malestar','Falta de aire','Otro'].map(s=>`<div class="esas"><span>${s}</span><input type="range" min="0" max="10" value="0" data-k="${s}"><b>0</b></div>`).join('') + `<input data-k="otrotxt" placeholder="Si marcaste Otro, ¿cuál?" style="margin-top:8px"><div class="src">ESAS-r. Edmonton. 0 nada, 10 lo peor posible. Apetito: 0 mejor, 10 peor.</div>`; },
+  esas(){ return ['Dolor','Cansancio','Náuseas','Depresión','Ansiedad','Somnolencia','Apetito','Malestar','Falta de aire','Otro'].map(s=>`<div class="esas"><span class="esas-name">${s}</span><input type="range" min="0" max="10" step="1" value="0" data-k="${s}"><b>0</b></div>`).join('') + `<input data-k="otrotxt" placeholder="Si marcaste Otro, ¿cuál?" style="margin-top:8px"><div class="src">ESAS-r. Edmonton. 0 nada, 10 lo peor posible. Apetito: 0 mejor, 10 peor. El puntaje sigue siendo entero.</div>`; },
   dolor(){ return `
     <div class="esas"><span>Intensidad ahora</span><input type="range" min="0" max="10" value="0" data-k="nrs"><b>0</b></div>
     <b>Componente neuropático (entrevista)</b>
@@ -586,17 +672,29 @@ function collect(id, silent){
   const txt = interpret(id, d);
   box.innerHTML = txt ? `<b>${txt}</b>` : '<span class="muted">Sin resultado todavía.</span>';
   const st = $('st-'+id); if(st) st.textContent = txt ? 'listo' : 'abrir';
-  root.querySelectorAll('input[type=range]').forEach(n=>{ const b=n.nextElementSibling; if(b&&b.tagName==='B') b.textContent=n.value; });
+  root.querySelectorAll('input[type=range]').forEach(n=>{ const b=n.nextElementSibling; if(b&&b.tagName==='B') b.textContent=n.value; n.style.setProperty('--p', ((Number(n.value)||0)/10*100)+'%'); });
 }
 function num(v){ const n = parseFloat(String(v??'').replace(',','.')); return Number.isFinite(n)?n:null; }
 function interpret(id, d){
   if(id==='necpal'){
-    const params = Object.keys(d).filter(k=>k.startsWith('p')&&d[k]).length;
-    if(!d.sq) return '';
-    if(d.sq==='no') return 'NECPAL negativo: la pregunta sorpresa es negativa.';
-    if(!params) return 'Pregunta sorpresa positiva, sin parámetros: no alcanza NECPAL positivo.';
-    const stage = params<=2?'I, mediana publicada 38 meses':params<=4?'II, mediana publicada 17,2 meses':'III, mediana publicada 3,6 meses';
-    return `NECPAL positivo, ${params} parámetro${params>1?'s':''}, estadio ${stage}.`;
+    if(!d.sq && !d.demanda) return '';
+    const nombres = {p1:'declive funcional',p2:'declive nutricional',p3:'síntomas persistentes',p4:'multimorbilidad',p5:'uso intensivo de recursos'};
+    const on = Object.keys(nombres).filter(k=>d[k]).map(k=>nombres[k]);
+    const grupos = [];
+    if(['ep1','ep2','ep3','ep4','ep5'].some(k=>d[k])) grupos.push('EPOC');
+    if(['ic1','ic2','ic3','ic4','ic5'].some(k=>d[k])) grupos.push('insuficiencia cardíaca');
+    if(['de1','de2','de3','de4','de5','de6'].some(k=>d[k])) grupos.push('demencia');
+    if(['re1','re2','re3','re4','re5','re6'].some(k=>d[k])) grupos.push('enfermedad renal');
+    if(['he1','he2','he3','he4','he5','he6'].some(k=>d[k])) grupos.push('cirrosis');
+    if(d.onco) grupos.push('oncología');
+    if(grupos.length) on.push('indicadores específicos ('+grupos.join(', ')+')');
+    const demanda = d.demanda ? ' Consta demanda de adecuación del esfuerzo o de atención paliativa.' : '';
+    if(d.sq==='no') return 'NECPAL 4.0 negativo: la pregunta sorpresa es negativa.'+demanda;
+    if(!d.sq) return 'NECPAL 4.0: hay demanda expresada. Falta la pregunta sorpresa.';
+    if(!on.length) return 'NECPAL 4.0: pregunta sorpresa positiva, sin parámetros generales.'+demanda;
+    const n = on.length;
+    const stage = n<=2?'estadio inicial o precoz':n<=4?'estadio intermedio':'estadio avanzado, mediana de supervivencia menor a 3,5–4 meses';
+    return `NECPAL 4.0 positivo, ${n} parámetro${n>1?'s':''} (${on.join(', ')}), ${stage}.`+demanda;
   }
   if(id==='spict'){
     const g = Object.keys(d).filter(k=>k.startsWith('g')&&d[k]).length;
