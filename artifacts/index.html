@@ -64,7 +64,7 @@
   }
   .btn svg{width:18px;height:18px;flex:0 0 auto}
   .btn:active{transform:scale(.98)}
-  .btn:focus-visible,.short:focus-visible,.mod:focus-visible,.scale-toggle:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{
+  .btn:focus-visible,.short:focus-visible,.eval-link:focus-visible,.mod:focus-visible,.scale-toggle:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{
     outline:none;box-shadow:0 0 0 3px var(--ring);
   }
   .btn-primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
@@ -120,6 +120,14 @@
   .short b{font-size:17px;font-weight:600;line-height:1.2}
   .short .sub{display:block;color:var(--muted);font-size:13px;font-weight:400;line-height:1.35}
   .short:active{transform:scale(.98)}
+  .eval-link{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    min-height:52px;margin:2px 0 18px;padding:12px 16px;border-radius:16px;
+    background:var(--surface);color:var(--ink);border:1px solid var(--line);
+    text-decoration:none;font-weight:600;font-size:15px;line-height:1.3;box-shadow:var(--shadow);
+  }
+  .eval-link svg{width:18px;height:18px;flex:0 0 auto;color:var(--accent)}
+  .eval-link:active{transform:scale(.99)}
   .mods{display:grid;grid-template-columns:1fr;gap:12px;align-items:stretch}
   .mod{
     display:flex;flex-direction:column;align-items:flex-start;text-align:left;width:100%;height:100%;
@@ -377,6 +385,10 @@
     <button class="short" onclick="openVisit('delirium')"><span class="short-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M8.5 14.5a3 3 0 0 1-.8-5.7A3.4 3.4 0 0 1 12 6.2a3.4 3.4 0 0 1 4.6 2.4 3 3 0 0 1-.6 5.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M9 14.5V17a3 3 0 0 0 6 0v-2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><b>Delirium</b><span class="sub">RASS, CAM y MDAS si positivo</span></button>
     <button class="short" onclick="openVisit('techo')"><span class="short-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3.5l7 3v6c0 4.2-2.9 6.6-7 8.5-4.1-1.9-7-4.3-7-8.5v-6l7-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><b>Techo terapéutico</b><span class="sub">PPS, PaP o PPI, planificación</span></button>
   </div>
+  <a class="eval-link" href="https://leandroantonielli.github.io/evaluacionpaliativos/" target="_blank" rel="noopener">
+    Ir a Herramienta de Evaluación Inicial completa
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
   <h2 class="section-title">Escalas agrupadas por categorías</h2>
   <div class="mods" id="modgrid"></div>
   <details class="card visit-fold">
