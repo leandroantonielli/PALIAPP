@@ -548,7 +548,7 @@ function hint(id){
     dolor:'Intensidad y componente neuropático.',
     rass:'+4 a −5.',
     cam:'Delirium si 1 y 2, más 3 o 4.',
-    mdas:'10 ítems, con la consigna de cada uno. Corte ≥7.',
+    mdas:'0–6 no. Leve 7–13. Moderado 14–18. Severo 19–25. Profundo 26–30.',
     mmse:'30 puntos por dominios, para cargar en vivo.',
     gds:'Estadio 1 a 7.',
     zarit:'12 ítems. Corte orientativo ≥17.',
@@ -756,9 +756,10 @@ const forms = {
       <label class="opt"><input type="radio" name="psicomotor" value="hipo"><span>Hipoactivo</span></label>
       <label class="opt"><input type="radio" name="psicomotor" value="hiper"><span>Hiperactivo</span></label>
       <label class="opt"><input type="radio" name="psicomotor" value="mixto"><span>Los dos</span></label>`;
-    return `<p class="muted">Severidad de cada síntoma, de 0 a 3, según lo que se ve ahora o en las últimas horas. El total va de 0 a 30.</p>` +
+    return `<p class="muted">Severidad de cada síntoma, de 0 a 3, según lo que se ve ahora o en las últimas horas. El total va de 0 a 30.</p>
+      <p class="muted">0–6 sin delirium. 7–13 leve: de 7 a 9 es zona de sospecha o corte temprano. 14–18 moderado. 19–25 severo. 26–30 profundo.</p>` +
       items.map(([k,t,how,opts])=>`<div class="mdas-item"><b>${t}</b><p class="muted mdas-how">${how}</p>${opts.map(([v,lab,txt])=>`<label class="opt"><input type="radio" name="${k}" value="${v}"><span><b>${v}. ${lab}.</b> ${txt}</span></label>`).join('')}${k==='Psicomotricidad'?tipo:''}</div>`).join('') +
-      `<div class="src">Adaptación al español del Memorial Delirium Assessment Scale, Breitbart y cols., 1997. Corte diagnóstico ≥7.</div>`;
+      `<div class="src">Ítems: adaptación al español de Breitbart y cols., 1997. Rangos de severidad: clases latentes del MDAS-T en cuidados paliativos, Klankluang y cols., The Oncologist 2020 (PMC7011635): leve 9–13, moderado 14–18, severo 19–25, profundo 26–30. El corte diagnóstico de ese estudio fue 9. Acá, 0–6 es sin delirium y 7–9 se marca como sospecha, porque el corte del material INC es ≥7.</div>`;
   },
   mmse(){ return [['Orientación',10],['Registro',3],['Atención',5],['Recuerdo',3],['Lenguaje y praxia',9]].map(([t,m])=>`<label>${t} (0–${m})<input data-k="${t}" inputmode="numeric" placeholder="0–${m}"></label>`).join('') + `<label>Años de escolaridad<input data-k="esc" inputmode="numeric"></label><div class="src">Folstein 1975. Carga por dominio para usarla en vivo; el formulario licenciado sigue siendo el oficial. Cortes habituales 24–30 / 19–23 / 10–18 / ≤9, ajustar por escolaridad.</div>`; },
   gds(){ return [1,2,3,4,5,6,7].map(n=>`<label class="opt"><input type="radio" name="gds" value="${n}"> <b>GDS ${n}.</b> ${['','Normalidad','Queja subjetiva','Déficit observable','Demencia leve','Demencia moderada','Demencia moderada-severa','Demencia grave'][n]}</label>`).join('') + `<div class="src">Reisberg 1982. Anexo 11 INC.</div>`; },
@@ -925,8 +926,9 @@ function interpret(id, d){
     const vals = keys.map(k=>num(d[k]));
     if(vals.some(v=>v==null)) return '';
     const t = vals.reduce((a,b)=>a+b,0);
+    const banda = t<=6?'sin delirium':t<=9?'delirium leve, en la zona de sospecha (7 a 9)':t<=13?'delirium leve':t<=18?'delirium moderado':t<=25?'delirium severo':'delirium profundo';
     const tipo = {hipo:'hipoactivo',hiper:'hiperactivo',mixto:'hipo e hiperactivo'}[d.psicomotor];
-    return `MDAS ${t}/30: ${t>=7?'alcanza el corte de delirium':'por debajo del corte de delirium'}${tipo?`, psicomotricidad ${tipo}`:''}.`;
+    return `MDAS ${t}/30: ${banda}${tipo?`, psicomotricidad ${tipo}`:''}.`;
   }
   if(id==='mmse'){
     const spec = [['Orientación',10],['Registro',3],['Atención',5],['Recuerdo',3],['Lenguaje y praxia',9]];
@@ -1081,7 +1083,7 @@ function renderSources(){
     <div class="card"><h2>De dónde sale cada cosa</h2>
     <ul>
       <li>NECPAL 4.0, SPICT, HexCom-Clin, Barthel, ECOG, Karnofsky, CAM y GDS: material INC/MSAL, módulo 1, más la fuente primaria citada en cada escala.</li>
-      <li>MDAS: adaptación al español de Breitbart y cols., 1997. Corte ≥7.</li>
+      <li>MDAS: ítems de Breitbart y cols., 1997. Rangos de severidad: Klankluang y cols., The Oncologist 2020 (PMC7011635). Leve 9–13, moderado 14–18, severo 19–25, profundo 26–30. Corte de ese estudio: 9. Acá, 0–6 es sin delirium y 7–9 queda como sospecha.</li>
       <li>PPI: Morita 1999. PaP: Maltoni y Pirovano 1999.</li>
       <li>PPS: Victoria Hospice. Descriptores resumidos.</li>
       <li>ESAS-r: Edmonton Symptom Assessment System.</li>
