@@ -114,7 +114,10 @@
   .scale .hint{display:block;font-size:.8125rem;font-weight:400;color:var(--muted)}
   .scale .body{padding:0 16px;max-height:0;overflow:hidden;transition:max-height .32s cubic-bezier(.4,0,.2,1), padding .32s cubic-bezier(.4,0,.2,1)}
   .scale.open{background:var(--surface);box-shadow:var(--shadow)}
-  .scale.open .body{display:block;max-height:4200px;padding:4px 16px 16px}
+  .scale.open .body{display:block;max-height:24000px;padding:4px 16px 16px}
+  .mdas-item{margin:18px 0 4px}
+  .mdas-item b{display:block;margin-bottom:4px}
+  .mdas-how{margin:0 0 8px;font-weight:400}
   footer.sticky{
     position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));
     background:color-mix(in srgb, var(--surface) 78%, transparent);
@@ -545,7 +548,7 @@ function hint(id){
     dolor:'Intensidad y componente neuropático.',
     rass:'+4 a −5.',
     cam:'Delirium si 1 y 2, más 3 o 4.',
-    mdas:'0–30. Corte ≥7.',
+    mdas:'10 ítems, con la consigna de cada uno. Corte ≥7.',
     mmse:'30 puntos por dominios, para cargar en vivo.',
     gds:'Estadio 1 a 7.',
     zarit:'12 ítems. Corte orientativo ≥17.',
@@ -686,7 +689,77 @@ const forms = {
     <div class="src">Intensidad numérica. DN4, porción de entrevista (Bouhassira 2005): ≥3 de 7 sugiere componente neuropático. No reemplaza el examen.</div>`; },
   rass(){ return [['4','Combativo'],['3','Muy agitado'],['2','Agitado'],['1','Inquieto'],['0','Alerta y tranquilo'],['-1','Somnoliento'],['-2','Sedación leve'],['-3','Sedación moderada'],['-4','Sedación profunda'],['-5','No despertable']].map(([v,t])=>`<label class="opt"><input type="radio" name="rass" value="${v}"> <b>${v}</b> ${t}</label>`).join('') + `<div class="src">Richmond Agitation-Sedation Scale. Sessler 2002.</div>`; },
   cam(){ return ['Inicio agudo o curso fluctuante','Inatención','Pensamiento desorganizado','Conciencia distinta de alerta'].map((t,i)=>`<label class="opt"><input type="checkbox" data-k="c${i}"> <b>${i+1}.</b> ${t}</label>`).join('') + `<div class="src">Inouye, 1990. Anexo 14 INC. Positivo si 1 y 2, más 3 o 4.</div>`; },
-  mdas(){ return ['Conciencia','Orientación','Memoria breve','Series','Atención','Pensamiento','Percepción','Ideación','Psicomotricidad','Sueño'].map(t=>`<div class="grid2"><span>${t}</span><select data-k="${t}"><option value="">—</option><option value="0">0</option><option value="1">1 leve</option><option value="2">2 moderado</option><option value="3">3 grave</option></select></div>`).join('') + `<div class="src">Memorial Delirium Assessment Scale. Anexo 13 INC. Corte diagnóstico del material: ≥7.</div>`; },
+  mdas(){
+    const items = [
+      ['Conciencia','1. Disminución del nivel de conciencia','Nivel de conciencia actual en la interacción con el entorno: el entrevistador, otras personas o los objetos de la habitación. Pedir que describa lo que hay alrededor.',[
+        ['0','No','De forma espontánea está totalmente consciente e interactúa bien.'],
+        ['1','Leve','No reconoce algún elemento o no interactúa bien de entrada, pero llega a estar consciente si se insiste. La entrevista se alarga y no se deteriora de forma marcada.'],
+        ['2','Moderada','No reconoce parte o todo el entorno, o no interactúa de forma espontánea. Queda consciente de forma incompleta aunque se insista.'],
+        ['3','Grave','No reconoce el entorno ni al entrevistador y no hay interacción. La entrevista es difícil o imposible aunque se insista.']
+      ]],
+      ['Orientación','2. Desorientación','Preguntar estos 10 ítems: día de la semana, día del mes, mes, año, estación, piso, nombre del hospital, ciudad, provincia o comunidad, y país.',[
+        ['0','No','Responde bien 9 o 10.'],
+        ['1','Leve','Responde bien 7 u 8.'],
+        ['2','Moderada','Responde bien 5 o 6.'],
+        ['3','Grave','Responde bien 4 o menos.']
+      ]],
+      ['Memoria breve','3. Memoria a corto plazo','Pedir que repita 3 palabras en el momento y que las recuerde a los 5 minutos, después de otra tarea. En controles, cambiar el trío. Por ejemplo: manzana, mesa, mañana; o cielo, cigarro, justicia.',[
+        ['0','No','Repite y recuerda las 3.'],
+        ['1','Leve','Repite las 3 y no recuerda una.'],
+        ['2','Moderada','Repite las 3 y no recuerda dos o las tres.'],
+        ['3','Grave','No logra repetir una o más.']
+      ]],
+      ['Series','4. Series numéricas','Hacia adelante: primero 3, después 4 y después 5. Luego hacia atrás: 3 y después 4. Solo pasar al paso siguiente si el anterior salió bien.',[
+        ['0','No','Al menos 5 hacia adelante y 4 hacia atrás.'],
+        ['1','Leve','Al menos 5 hacia adelante y 3 hacia atrás.'],
+        ['2','Moderada','4 o 5 hacia adelante, y no puede 3 hacia atrás.'],
+        ['3','Grave','No puede más de 3 hacia adelante.']
+      ]],
+      ['Atención','5. Atención','Durante la entrevista: hay que repetir preguntas, pierde el hilo, se distrae con estímulos de afuera o queda absorto en otra cosa.',[
+        ['0','No','Mantiene y cambia el foco con normalidad.'],
+        ['1','Leve','Ocurre una o dos veces, sin alargar la entrevista.'],
+        ['2','Moderada','Es frecuente. Alarga la entrevista, pero se puede terminar.'],
+        ['3','Grave','Es constante. La entrevista se vuelve difícil o imposible.']
+      ]],
+      ['Pensamiento','6. Pensamiento desorganizado','Divagación, discurso irrelevante o incoherente, o un razonamiento desordenado. Hacer una pregunta compleja: por ejemplo, que describa su situación clínica.',[
+        ['0','No','El discurso es coherente y va dirigido.'],
+        ['1','Leve','Cuesta un poco seguirlo. Se aleja del objetivo, sin alargar la entrevista.'],
+        ['2','Moderada','El desorden es claro. La entrevista se alarga, pero no se corta.'],
+        ['3','Grave','La entrevista es muy difícil o imposible por el discurso.']
+      ]],
+      ['Percepción','7. Alteraciones de la percepción','Percepciones erróneas, ilusiones o alucinaciones: las que se ven en la entrevista, las que admite, y las que refieren la familia, enfermería o la historia en las últimas horas.',[
+        ['0','No','No hay percepciones erróneas, ilusiones ni alucinaciones.'],
+        ['1','Leve','Ligadas al sueño, o alucinaciones fugaces una o dos veces, sin conducta inadecuada.'],
+        ['2','Moderada','Varias veces, con un cambio mínimo de conducta que no corta la entrevista.'],
+        ['3','Grave','Frecuentes o intensas, con conducta inadecuada que corta la entrevista o interfiere con los cuidados.']
+      ]],
+      ['Ideación','8. Ideación delirante','Creencia falsa tenida por real. Lo más habitual es la ideación paranoide. Se infiere por la conducta, por lo que admite, o por lo que refieren familia, enfermería o la historia en las últimas horas.',[
+        ['0','No','No hay interpretaciones erróneas ni ideación delirante.'],
+        ['1','Leve','Suspicacia o interpretación errónea, sin delirio franco ni conducta inadecuada.'],
+        ['2','Moderada','Delirio admitido o evidente. No corta la entrevista, o lo hace de forma tangencial, y no interfiere con los cuidados.'],
+        ['3','Grave','Intenso o persistente, con conducta inadecuada que corta la entrevista o interfiere seriamente con el cuidado.']
+      ]],
+      ['Psicomotricidad','9. Actividad psicomotora','Actividad de las últimas horas y durante la entrevista. Si no es normal, marcar si es hipoactivo, hiperactivo o ambos.',[
+        ['0','No','Actividad normal.'],
+        ['1','Leve','Hipoactividad apenas perceptible, o hiperactividad apenas perceptible, como inquietud.'],
+        ['2','Moderada','Hipoactividad clara: pocos movimientos, lentitud, casi no habla ni se mueve solo. O hiperactividad clara: se mueve casi todo el tiempo. El examen se alarga.'],
+        ['3','Grave','Hipoactividad grave: no se mueve ni habla sin que se insista, o está catatónico. O hiperactividad grave: movimiento constante, reacción exagerada, necesita vigilancia o sujeción. El examen es difícil o imposible.']
+      ]],
+      ['Sueño','10. Ciclo vigilia-sueño','Capacidad de dormirse y de mantenerse despierto cuando corresponde. Usar la entrevista y lo que digan enfermería, la familia, el paciente o los registros de las últimas horas. La noche previa solo cuenta si la evaluación es a la mañana.',[
+        ['0','No','Duerme de noche y se mantiene despierto de día.'],
+        ['1','Leve','Cuesta dormirse o hay despertares breves, o necesita medicación. De día hay somnolencia, pero despierta fácil.'],
+        ['2','Moderada','Despertares nocturnos repetidos y largos. De día, sueño frecuente y prolongado, o solo despierta del todo con un estímulo fuerte.'],
+        ['3','Grave','De noche permanece despierto. De día duerme la mayor parte del tiempo, o no se lo puede despertar del todo.']
+      ]]
+    ];
+    const tipo = `<p class="muted mdas-how">Si el puntaje de este ítem no es 0, marcar el tipo.</p>
+      <label class="opt"><input type="radio" name="psicomotor" value="hipo"><span>Hipoactivo</span></label>
+      <label class="opt"><input type="radio" name="psicomotor" value="hiper"><span>Hiperactivo</span></label>
+      <label class="opt"><input type="radio" name="psicomotor" value="mixto"><span>Los dos</span></label>`;
+    return `<p class="muted">Severidad de cada síntoma, de 0 a 3, según lo que se ve ahora o en las últimas horas. El total va de 0 a 30.</p>` +
+      items.map(([k,t,how,opts])=>`<div class="mdas-item"><b>${t}</b><p class="muted mdas-how">${how}</p>${opts.map(([v,lab,txt])=>`<label class="opt"><input type="radio" name="${k}" value="${v}"><span><b>${v}. ${lab}.</b> ${txt}</span></label>`).join('')}${k==='Psicomotricidad'?tipo:''}</div>`).join('') +
+      `<div class="src">Adaptación al español del Memorial Delirium Assessment Scale, Breitbart y cols., 1997. Corte diagnóstico ≥7.</div>`;
+  },
   mmse(){ return [['Orientación',10],['Registro',3],['Atención',5],['Recuerdo',3],['Lenguaje y praxia',9]].map(([t,m])=>`<label>${t} (0–${m})<input data-k="${t}" inputmode="numeric" placeholder="0–${m}"></label>`).join('') + `<label>Años de escolaridad<input data-k="esc" inputmode="numeric"></label><div class="src">Folstein 1975. Carga por dominio para usarla en vivo; el formulario licenciado sigue siendo el oficial. Cortes habituales 24–30 / 19–23 / 10–18 / ≤9, ajustar por escolaridad.</div>`; },
   gds(){ return [1,2,3,4,5,6,7].map(n=>`<label class="opt"><input type="radio" name="gds" value="${n}"> <b>GDS ${n}.</b> ${['','Normalidad','Queja subjetiva','Déficit observable','Demencia leve','Demencia moderada','Demencia moderada-severa','Demencia grave'][n]}</label>`).join('') + `<div class="src">Reisberg 1982. Anexo 11 INC.</div>`; },
   zarit(){ return ['Pide más ayuda de la que necesita','No alcanza el tiempo','Estrés al convivir con el cuidado','Vergüenza o enojo','Impacto en otras relaciones','Miedo por el futuro','Dependencia total de usted','Salud propia resentida','Pérdida de control de la vida','Desear poder delegar','Inseguridad sobre qué hacer','Sensación de que debería hacer más'].map(t=>`<div class="grid2"><span>${t}</span><select data-k="${t}"><option value="">—</option><option value="0">Nunca</option><option value="1">Rara vez</option><option value="2">A veces</option><option value="3">Frecuente</option><option value="4">Casi siempre</option></select></div>`).join('') + `<div class="src">Zarit Burden Interview, forma breve de 12 ítems (Bédard 2001). Ítems parafraseados. Corte orientativo de carga alta ≥17.</div>`; },
@@ -731,7 +804,10 @@ function collect(id, silent){
   const d = {};
   root.querySelectorAll('[data-k]').forEach(n=>{ d[n.dataset.k] = n.type==='checkbox' ? n.checked : n.value; });
   root.querySelectorAll('input[type=radio]:checked').forEach(n=>{ d[n.name] = n.value; });
-  const empty = !Object.values(d).some(v=>v && v!=='0' && v!==false);
+  const keys10 = ['Conciencia','Orientación','Memoria breve','Series','Atención','Pensamiento','Percepción','Ideación','Psicomotricidad','Sueño'];
+  const empty = id==='mdas'
+    ? !keys10.some(k=>d[k]!=null && d[k]!=='')
+    : !Object.values(d).some(v=>v && v!=='0' && v!==false);
   if(!silent){ state[id] = empty ? undefined : d; if(empty) delete state[id]; persist(); }
   const box = root.querySelector('.scorebox') || document.createElement('div');
   if(!root.querySelector('.scorebox')){ box.className='scorebox'; root.appendChild(box); }
@@ -845,10 +921,12 @@ function interpret(id, d){
     return (c[0]&&c[1]&&(c[2]||c[3]))?'CAM positivo: cumple criterios de delirium.':'CAM negativo: no cumple el algoritmo de delirium.';
   }
   if(id==='mdas'){
-    const vals = Object.values(d).map(num);
+    const keys = ['Conciencia','Orientación','Memoria breve','Series','Atención','Pensamiento','Percepción','Ideación','Psicomotricidad','Sueño'];
+    const vals = keys.map(k=>num(d[k]));
     if(vals.some(v=>v==null)) return '';
     const t = vals.reduce((a,b)=>a+b,0);
-    return `MDAS ${t}/30: ${t>=7?'alcanza el corte de delirium':'por debajo del corte de delirium'}.`;
+    const tipo = {hipo:'hipoactivo',hiper:'hiperactivo',mixto:'hipo e hiperactivo'}[d.psicomotor];
+    return `MDAS ${t}/30: ${t>=7?'alcanza el corte de delirium':'por debajo del corte de delirium'}${tipo?`, psicomotricidad ${tipo}`:''}.`;
   }
   if(id==='mmse'){
     const spec = [['Orientación',10],['Registro',3],['Atención',5],['Recuerdo',3],['Lenguaje y praxia',9]];
@@ -1002,7 +1080,8 @@ function renderSources(){
   $('view-sources').innerHTML = `<button class="btn navback" onclick="show('home')">← PALIAPP</button>
     <div class="card"><h2>De dónde sale cada cosa</h2>
     <ul>
-      <li>NECPAL 4.0, SPICT, HexCom-Clin, Barthel, ECOG, Karnofsky, CAM, GDS y MDAS: material INC/MSAL, módulo 1, más la fuente primaria citada en cada escala.</li>
+      <li>NECPAL 4.0, SPICT, HexCom-Clin, Barthel, ECOG, Karnofsky, CAM y GDS: material INC/MSAL, módulo 1, más la fuente primaria citada en cada escala.</li>
+      <li>MDAS: adaptación al español de Breitbart y cols., 1997. Corte ≥7.</li>
       <li>PPI: Morita 1999. PaP: Maltoni y Pirovano 1999.</li>
       <li>PPS: Victoria Hospice. Descriptores resumidos.</li>
       <li>ESAS-r: Edmonton Symptom Assessment System.</li>
