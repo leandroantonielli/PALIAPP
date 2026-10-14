@@ -120,22 +120,30 @@
   .short b{font-size:17px;font-weight:600;line-height:1.2}
   .short .sub{display:block;color:var(--muted);font-size:13px;font-weight:400;line-height:1.35}
   .short:active{transform:scale(.98)}
-  .mods{display:grid;grid-template-columns:1fr;gap:12px}
+  .mods{display:grid;grid-template-columns:1fr;gap:12px;align-items:stretch}
   .mod{
-    display:flex;flex-direction:column;align-items:stretch;text-align:left;width:100%;
-    padding:20px 20px 20px 22px;border:1px solid var(--line);border-radius:16px;
-    background:var(--surface);box-shadow:var(--shadow);position:relative;cursor:pointer;
+    display:flex;flex-direction:column;align-items:flex-start;text-align:left;width:100%;height:100%;
+    padding:16px;border:1px solid var(--line);border-radius:20px;
+    background:var(--surface);box-shadow:var(--shadow);cursor:pointer;
     font:inherit;color:inherit;
   }
   .mod:active{transform:scale(.995)}
-  .mod .bar{position:absolute;left:10px;top:18px;bottom:18px;width:4px;border-radius:99px}
-  .mod ul{margin:8px 0 0;padding:0 0 0 18px;color:var(--muted);font-size:.875rem;font-weight:400}
-  .mod p{margin:0;font-weight:400}
-  .chip{display:inline-flex;align-items:center;align-self:flex-start;height:26px;margin-top:10px;border-radius:99px;padding:0 10px;background:var(--soft);color:var(--ink);font-size:.75rem;font-weight:600}
+  .mod-ico{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;margin-bottom:12px}
+  .mod-ico svg{width:20px;height:20px;display:block}
+  .mod-head{display:flex;width:100%;align-items:flex-start;justify-content:space-between;gap:8px}
+  .mod h3{margin:0;font-size:17px;font-weight:600;line-height:1.25}
+  .mod p{margin:4px 0 12px;font-size:15px;font-weight:400;line-height:1.4}
+  .mod-count{flex:0 0 auto;font-size:13px;font-weight:600;color:var(--accent);line-height:1.2}
+  .mod-count.done{width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center}
+  .mod-count.done svg{width:16px;height:16px}
+  .mod-chips{margin-top:auto;display:flex;flex-wrap:wrap;gap:6px}
+  .mini{font-size:12px;font-weight:500;line-height:1.2;padding:5px 8px;border-radius:99px;background:var(--soft);color:var(--muted)}
+  .mini.on{color:var(--ink);background:var(--surface);box-shadow:inset 0 0 0 1px var(--line)}
+  .empty-vis{display:flex;flex-direction:column;align-items:flex-start;gap:4px;color:var(--muted);font-weight:400}
+  .empty-vis svg{width:28px;height:28px;color:var(--accent)}
+  .empty-vis b{color:var(--ink);font-weight:600;font-size:15px}
+  .chip{display:inline-flex;align-items:center;align-self:flex-start;height:26px;margin-top:0;border-radius:99px;padding:0 10px;background:var(--soft);color:var(--ink);font-size:12px;font-weight:600;flex:0 0 auto}
   .chip.ready{background:var(--accent);color:var(--accent-ink)}
-  .mod.done{box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 70%, transparent), var(--shadow)}
-  .meter{height:6px;background:var(--soft);border-radius:99px;margin-top:14px;overflow:hidden}
-  .meter i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .25s ease}
   .scale{border:0;border-radius:16px;margin:10px 0;overflow:hidden;background:var(--soft)}
   .scale>header,.scale-toggle{
     padding:16px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;
@@ -262,6 +270,7 @@
   }
   @media (min-width:980px){
     .shortcuts{grid-template-columns:repeat(4, minmax(0,1fr))}
+    .mods{grid-template-columns:repeat(3, minmax(0,1fr))}
   }
   @media (prefers-reduced-motion: reduce){
     *,*::before,*::after{transition:none !important;animation:none !important}
@@ -284,6 +293,46 @@
     input[type=range]::-moz-range-track{background:#3a3a3c}
     input[type=range]::-moz-range-progress{background:var(--accent)}
     input[type=range]::-webkit-slider-thumb,input[type=range]::-moz-range-thumb{box-shadow:0 2px 10px rgba(0,0,0,.45)}
+    label.switch input[type=checkbox]{background-color:#3a3a3c}
+  }
+  .opt:not(.switch){position:relative;padding-right:44px}
+  .opt:not(.switch):has(input:checked){background:color-mix(in srgb, var(--accent) 12%, var(--surface));box-shadow:inset 0 0 0 1.5px var(--accent)}
+  .opt:not(.switch):has(input:checked)::after{
+    content:"";position:absolute;right:14px;top:16px;width:18px;height:18px;border-radius:50%;
+    background:var(--accent) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M3.2 8.2l3 3.1 6.2-6.4' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>") center/12px no-repeat;
+  }
+  .seg-wrap{display:flex;flex-wrap:wrap;gap:8px}
+  .seg-wrap .opt{width:auto;margin:0;border-radius:999px;min-height:44px;padding:8px 14px;align-items:center}
+  .seg-wrap .opt input{position:absolute;width:1px;height:1px;min-height:0;opacity:0;margin:0}
+  .seg-wrap .opt:focus-within{box-shadow:0 0 0 3px var(--ring)}
+  .seg-wrap .opt:has(input:checked){background:var(--accent);color:var(--accent-ink);box-shadow:none}
+  .seg-wrap .opt:has(input:checked)::after{content:none}
+  .esas{display:block;margin:16px 0}
+  .esas-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+  .esas-name{font-weight:600;font-size:15px;color:var(--ink);background:none;box-shadow:none;padding:0;border-radius:0;min-width:0;max-width:none}
+  .seg{position:relative;display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+  .seg-range{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+  .pill{
+    flex:0 0 auto;min-width:36px;height:36px;border-radius:999px;border:1px solid var(--line);
+    background:var(--surface);color:var(--ink);font-weight:600;font-size:14px;padding:0 8px;
+  }
+  .pill.on{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+  .pill:focus-visible{outline:none;box-shadow:0 0 0 3px var(--ring)}
+  label.switch{flex-direction:row;align-items:center;justify-content:space-between;gap:12px;min-height:48px;font-weight:500;font-size:15px}
+  label.switch input[type=checkbox]{
+    width:51px;height:31px;min-height:31px;border:0;border-radius:99px;background-color:#d1d1d6;
+    background-image:radial-gradient(circle at 16px 50%, #fff 0 10px, transparent 11px);
+    background-repeat:no-repeat;
+  }
+  label.switch input[type=checkbox]:checked{
+    background-color:var(--accent);
+    background-image:radial-gradient(circle at calc(100% - 16px) 50%, #fff 0 10px, transparent 11px);
+  }
+  @media (prefers-color-scheme: dark){
+    .opt:not(.switch):has(input:checked)::after{
+      background:var(--accent) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M3.2 8.2l3 3.1 6.2-6.4' fill='none' stroke='%231c1c1e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>") center/12px no-repeat;
+    }
+    label.switch input[type=checkbox]{background-color:#3a3a3c}
   }
 </style>
 </head>
@@ -430,7 +479,7 @@ function renderMeta(){
       <label>Fecha y hora<input id="meta-when" type="datetime-local" value="${esc(when)}"></label>
       <label>Identificador local<input id="meta-id" placeholder="cama, iniciales, no va al texto" value="${esc(m.localId||'')}"></label>
     </div>
-    <label class="opt"><input id="meta-inc" type="checkbox" ${m.includeWhen?'checked':''}> Incluir fecha y hora en el texto</label>
+    <label class="switch"><input id="meta-inc" type="checkbox" ${m.includeWhen?'checked':''}> Incluir fecha y hora en el texto</label>
     <div class="meta-actions">
       <button type="button" class="btn" onclick="guardarVisita()" aria-label="Guardar visita"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5.5h11l3 3V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6.5a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.8"/><path d="M8 5.5V9h6M8 19v-5h8v5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Guardar</button>
       <button type="button" class="btn" onclick="exportar()" aria-label="Exportar JSON"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 19h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Exportar</button>
@@ -460,7 +509,7 @@ function renderSaved(){
   $('saved-card').innerHTML = `<p class="kicker">Visitas en este celular</p>
     ${list.length? list.map(v=>`<div class="sec-copy"><span>${esc(v.localId||'Sin identificador')} · ${esc((v.when||'').replace('T',' '))}</span>
       <span class="actions"><button type="button" class="btn" onclick="reabrir(${v.id})">Reabrir</button>
-      <button type="button" class="btn" onclick="duplicar(${v.id})">Duplicar</button></span></div>`).join('') : '<p class="muted">Todavía no hay visitas guardadas.</p>'}`;
+      <button type="button" class="btn" onclick="duplicar(${v.id})">Duplicar</button></span></div>`).join('') : '<div class="empty-vis"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 3.5V7M16 3.5V7M4 10h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><b>Todavía no hay visitas guardadas.</b><span>Cuando guardes una, queda en este celular para reabrirla o copiarla.</span></div>'}`;
 }
 function reabrir(id){
   const v = loadSaved().find(x=>x.id===id);
@@ -510,27 +559,56 @@ function importar(input){
   reader.readAsText(file);
   input.value = '';
 }
+function modIcon(id){
+  const paths = {
+    need:'<path d="M12 20.5s-6.5-4-6.5-9.2a3.7 3.7 0 0 1 6.5-2.2 3.7 3.7 0 0 1 6.5 2.2c0 5.2-6.5 9.2-6.5 9.2z" fill="none" stroke="currentColor" stroke-width="1.8"/>',
+    func:'<path d="M5 18V8M10 18V11M15 18v-5M20 18V6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    prog:'<circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 8.5V12l2.5 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    sym:'<path d="M3.5 12h4l2-5 4 10 2-5h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+    cog:'<circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3.5V6M12 18v2.5M3.5 12H6M18 12h2.5M6 6l1.8 1.8M16.2 16.2 18 18M18 6l-1.8 1.8M7.8 16.2 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    care:'<circle cx="9" cy="9" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="16" cy="10" r="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.8 18.5c.5-2.7 2.4-4 5.2-4s4.7 1.3 5.2 4M14.2 14.7c1.4-.4 2.8.1 3.8 1.5.5 1.3.7 2.3.8 2.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    plan:'<path d="M8 4h8a1 1 0 0 1 1 1v14l-2.2-1.4L12.5 19 10 17.6 8 19V5a1 1 0 0 1 0 0z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10.5 8.5h3M10.5 12h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    opio:'<rect x="3.5" y="9" width="17" height="7" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 9V6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    dep:'<path d="M5 7h14M9 7V5h6v2M7.5 7l.8 12h7.4l.8-12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'
+  };
+  return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[id]||paths.plan}</svg>`;
+}
+function chipLabel(id, d){
+  d = d || state[id] || {};
+  if(id==='pps' && d.pps) return `PPS ${d.pps}%`;
+  if(id==='ecog' && d.ecog!=null && d.ecog!=='') return `ECOG ${d.ecog}`;
+  if(id==='rass' && d.rass!=null && d.rass!=='') return `RASS ${d.rass}`;
+  if(id==='gds' && d.gds) return `GDS ${d.gds}`;
+  if(id==='fase' && d.fase) return `Fase ${d.fase}`;
+  if(id==='esas'){
+    const top = Object.entries(d).filter(([k])=>k!=='otrotxt').sort((a,b)=>num(b[1])-num(a[1]))[0];
+    return top && num(top[1])>0 ? `${top[0]} ${top[1]}` : 'ESAS-r';
+  }
+  const t = interpret(id, d);
+  if(!t) return 'listo';
+  const head = t.split(/[:.]/)[0].trim();
+  return head.length>26 ? head.slice(0,24)+'…' : head;
+}
 function renderHome(){
   $('modgrid').innerHTML = MODS.map(m=>{
     const tools = m.tools.filter(t=>t!=='dep');
     const done = tools.filter(t=>state[t]).length;
     const full = tools.length && done===tools.length;
-    if(m.id==='opio'){
-      return `<button type="button" class="mod" onclick="location.href='https://leandroantonielli.github.io/CalculadoraOpioides/'">
-      <div class="bar" style="background:${m.color}"></div>
-      <h3>${m.title}</h3>
-      <p class="muted" style="margin:0">${m.blurb}</p>
-      <ul><li>Calculadora de opioides</li></ul>
-      <span class="chip">abrir</span>
-    </button>`;
-    }
-    return `<button type="button" class="mod${full?' done':''}" onclick="openMod('${m.id}')">
-      <div class="bar" style="background:${m.color}"></div>
-      <h3>${m.title}</h3>
-      <p class="muted" style="margin:0">${m.blurb}</p>
-      <ul>${m.tools.map(t=>`<li>${NAMES[t]}</li>`).join('')}</ul>
-      <div class="meter" aria-hidden="true"><i style="width:${tools.length? Math.round(done/tools.length*100):0}%"></i></div>
-      <span class="chip">${full?'completa': done+'/'+tools.length}</span>
+    const count = !tools.length ? '' : full
+      ? `<span class="mod-count done" aria-label="completa"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`
+      : `<span class="mod-count">${done}/${tools.length}</span>`;
+    const chips = (m.id==='opio' ? ['Calculadora'] : m.tools.map(t=>NAMES[t])).map((name,i)=>{
+      const on = m.id==='opio' ? false : !!state[m.tools[i]];
+      return `<span class="mini${on?' on':''}">${name}</span>`;
+    }).join('');
+    const go = m.id==='opio'
+      ? `onclick="location.href='https://leandroantonielli.github.io/CalculadoraOpioides/'"`
+      : `onclick="openMod('${m.id}')"`;
+    return `<button type="button" class="mod${full?' done':''}" ${go}>
+      <span class="mod-ico" style="color:${m.color};background:color-mix(in srgb, ${m.color} 18%, var(--surface))">${modIcon(m.id)}</span>
+      <span class="mod-head"><h3>${m.title}</h3>${count}</span>
+      <p class="muted">${m.blurb}</p>
+      <span class="mod-chips">${chips}</span>
     </button>`;
   }).join('');
   renderMeta();
@@ -552,7 +630,7 @@ function openMod(modId, only){
     sec?.classList.add('open');
     sec?.querySelector('.scale-toggle')?.setAttribute('aria-expanded','true');
     const chip = sec?.querySelector('.chip');
-    if(chip && chip.textContent==='abrir') chip.textContent = 'cerrar';
+    if(chip && !chip.classList.contains('ready') && chip.textContent==='abrir') chip.textContent = 'cerrar';
   });
 }
 function toggleScale(btn){
@@ -560,10 +638,11 @@ function toggleScale(btn){
   const open = sec.classList.toggle('open');
   btn.setAttribute('aria-expanded', open ? 'true' : 'false');
   const chip = btn.querySelector('.chip');
-  if(chip && chip.textContent!=='listo') chip.textContent = open ? 'cerrar' : 'abrir';
+  if(chip && !chip.classList.contains('ready')) chip.textContent = open ? 'cerrar' : 'abrir';
 }
 function toolCard(id){
-  return `<section class="scale" id="sc-${id}"><h3 class="scale-h"><button type="button" class="scale-toggle" aria-expanded="false" aria-controls="bd-${id}" onclick="toggleScale(this)"><span><b>${NAMES[id]}</b><span class="muted hint">${hint(id)}</span></span><span class="chip${state[id]&&interpret(id,state[id])?' ready':''}" id="st-${id}">${state[id]&&interpret(id,state[id])?'listo':'abrir'}</span></button></h3><div class="body" id="bd-${id}"></div></section>`;
+  const ready = !!(state[id] && interpret(id, state[id]));
+  return `<section class="scale" id="sc-${id}"><h3 class="scale-h"><button type="button" class="scale-toggle" aria-expanded="false" aria-controls="bd-${id}" onclick="toggleScale(this)"><span><b>${NAMES[id]}</b><span class="muted hint">${hint(id)}</span></span><span class="chip${ready?' ready':''}" id="st-${id}">${ready?chipLabel(id):'abrir'}</span></button></h3><div class="body" id="bd-${id}"></div></section>`;
 }
 function hint(id){
   return ({
@@ -691,38 +770,41 @@ const forms = {
     const items = [['Clínica','Física','Terapéutica'],['Psicológica','Personalidad','Emocional'],['Espiritual','Sentido','Conexión','Trascendencia'],['Sociofamiliar','Relacional','Emocional del cuidador','Práctica','Externa','Económica'],['Ética','Información','AET','Deseo de anticipar la muerte'],['Muerte','Ubicación','Últimos días','Duelo']];
     return items.map(([area,...subs])=>`<div style="margin:8px 0"><b>${area}</b>${subs.map(s=>`<div class="grid2" style="margin-top:6px"><span>${s}</span><select data-k="${area}-${s}"><option value="">No evaluada</option><option>Baja</option><option>Media</option><option>Alta</option></select></div>`).join('')}</div>`).join('') + `<div class="src">HexCom-Clin® 2018, 18 subáreas. Busquet-Duran. Anexo 4 INC. El área y el global toman el máximo.</div>`;
   },
-  pps(){ return [100,90,80,70,60,50,40,30,20,10].map(n=>`<label class="opt"><input type="radio" name="pps" value="${n}"> <b>${n}%</b> ${ppsTxt(n)}</label>`).join('') + `<div class="src">Palliative Performance Scale. Victoria Hospice. Descriptores resumidos, no la tabla oficial completa.</div>`; },
-  ecog(){ return [0,1,2,3,4].map(n=>`<label class="opt"><input type="radio" name="ecog" value="${n}"> <b>ECOG ${n}.</b> ${['Asintomático','Sintomático, ambulatorio','En cama <50% del día','En cama >50% del día','Encamado, dependiente'][n]}</label>`).join('') + `<div class="src">Oken 1982. Redacción clínica: Anexo 8 INC.</div>`; },
-  kps(){ return `<select data-k="kps"><option value="">Elegir Karnofsky</option>${[100,90,80,70,60,50,40,30,20,10,0].map(n=>`<option value="${n}">${n}% · ${kpsTxt(n)}</option>`).join('')}</select><div class="src">Karnofsky 1949. Anexo 7 INC. Se reutiliza en PaP.</div>`; },
+  pps(){ return `<div class="seg-wrap">`+[100,90,80,70,60,50,40,30,20,10].map(n=>`<label class="opt"><input type="radio" name="pps" value="${n}"> <b>${n}%</b> ${ppsTxt(n)}</label>`).join('')+`</div><div class="src">Palliative Performance Scale. Victoria Hospice. Descriptores resumidos, no la tabla oficial completa.</div>`; },
+  ecog(){ return `<div class="seg-wrap">`+[0,1,2,3,4].map(n=>`<label class="opt"><input type="radio" name="ecog" value="${n}"> <b>ECOG ${n}.</b> ${['Asintomático','Sintomático, ambulatorio','En cama <50% del día','En cama >50% del día','Encamado, dependiente'][n]}</label>`).join('')+`</div><div class="src">Oken 1982. Redacción clínica: Anexo 8 INC.</div>`; },
+  kps(){ return `<div class="seg-wrap">`+[100,90,80,70,60,50,40,30,20,10,0].map(n=>`<label class="opt"><input type="radio" name="kps" value="${n}"><b>${n}%</b> ${kpsTxt(n)}</label>`).join('')+`</div><div class="src">Karnofsky 1949. Anexo 7 INC. Se reutiliza en PaP.</div>`; },
   barthel(){ return barthelItems().map(([k,t,opts])=>`<div style="margin:8px 0"><b>${t}</b>${opts.map(([v,l])=>`<label class="opt"><input type="radio" name="${k}" value="${v}"> ${l} (${v})</label>`).join('')}</div>`).join('') + `<div class="src">Mahoney y Barthel, 1965. Cortes INC: <20 total, 21–60 severa, 61–90 moderada, 91–99 leve, 100 independiente.</div>`; },
   lawton(){ return ['Teléfono','Compras','Comida','Casa','Ropa','Transporte','Medicación','Dinero'].map(t=>`<label class="opt"><input type="checkbox" data-k="${t}"> Independiente: ${t}</label>`).join('') + `<div class="src">Lawton y Brody, 1969. 0–8. No está en el PDF del módulo 1.</div>`; },
   katz(){ return ['Baño','Vestido','Baño/WC','Transferencia','Continencia','Alimentación'].map(t=>`<label class="opt"><input type="checkbox" data-k="${t}"> Independiente: ${t}</label>`).join('') + `<div class="src">Katz, 1963. Índice A–G según actividades perdidas.</div>`; },
-  fase(){ return [['estable','Estable: síntomas controlados, plan vigente.'],['inestable','Inestable: problema nuevo que exige cambio hoy.'],['deterioro','En deterioro: declive gradual, plan se va ajustando.'],['terminal','Terminal: muerte esperable en días.']].map(([v,t])=>`<label class="opt"><input type="radio" name="fase" value="${v}"> ${t}</label>`).join('') + `<div class="src">Fase de enfermedad, adaptación de Palliative Care Phase (Eagar y cols.). No incluye duelo: esta herramienta es de visita con el paciente.</div>`; },
+  fase(){ return `<div class="seg-wrap">`+[['estable','Estable'],['inestable','Inestable'],['deterioro','En deterioro'],['terminal','Terminal']].map(([v,t])=>`<label class="opt"><input type="radio" name="fase" value="${v}"> ${t}</label>`).join('')+`</div><p class="muted">Estable: síntomas controlados. Inestable: problema nuevo hoy. En deterioro: declive gradual. Terminal: muerte esperable en días.</p><div class="src">Fase de enfermedad, adaptación de Palliative Care Phase (Eagar y cols.). No incluye duelo: esta herramienta es de visita con el paciente.</div>`; },
   ppi(){ return `
     <p class="muted">Si ya cargaste PPS, se usa solo. Si no, elegilo acá.</p>
     <select data-k="pps"><option value="">PPS</option>${[10,20,30,40,50,60,70,80,90,100].map(n=>`<option value="${n}">${n}%</option>`).join('')}</select>
     <select data-k="ingesta" style="margin-top:8px"><option value="">Ingesta oral</option><option value="0">Normal</option><option value="1">Reducida</option><option value="2.5">Bocados o menos</option></select>
-    <label class="opt"><input type="checkbox" data-k="edema"> Edema</label>
-    <label class="opt"><input type="checkbox" data-k="disnea"> Disnea de reposo</label>
-    <label class="opt"><input type="checkbox" data-k="delirium"> Delirium</label>
+    <label class="switch"><input type="checkbox" data-k="edema"> Edema</label>
+    <label class="switch"><input type="checkbox" data-k="disnea"> Disnea de reposo</label>
+    <label class="switch"><input type="checkbox" data-k="delirium"> Delirium</label>
     <div class="src">Morita y cols., 1999. ≤4 mayor a 6 semanas; 4,1–6 intermedio; >6 menor a 3 semanas. El PPS del escritorio pisa este selector.</div>`; },
   pap(){ return `
-    <label class="opt"><input type="checkbox" data-k="disnea"> Disnea</label>
-    <label class="opt"><input type="checkbox" data-k="anorexia"> Anorexia</label>
+    <label class="switch"><input type="checkbox" data-k="disnea"> Disnea</label>
+    <label class="switch"><input type="checkbox" data-k="anorexia"> Anorexia</label>
     <select data-k="kps"><option value="">Karnofsky</option>${[10,20,30,40,50,60,70,80,90,100].map(n=>`<option>${n}</option>`).join('')}</select>
     <div class="grid2" style="margin-top:8px"><label>Leucocitos ×10⁹/L<input data-k="wbc" inputmode="decimal" placeholder="obligatorio"></label><label>% linfocitos<input data-k="lin" inputmode="decimal" placeholder="obligatorio"></label></div>
     <select data-k="cps" style="margin-top:8px"><option value="">Predicción clínica de supervivencia</option>
       <option value="0">Más de 12 semanas</option><option value="2">11–12 semanas</option><option value="2.5">7–10 semanas</option>
       <option value="4.5">5–6 semanas</option><option value="6">3–4 semanas</option><option value="8.5">1–2 semanas</option></select>
     <div class="src">Maltoni / Pirovano, 1999. Sin leucocitos o linfocitos no calcula. No usar en hemopatías.</div>`; },
-  esas(){ return ['Dolor','Cansancio','Náuseas','Depresión','Ansiedad','Somnolencia','Apetito','Malestar','Falta de aire','Otro'].map(s=>`<div class="esas"><span class="esas-name">${s}</span><input type="range" min="0" max="10" step="1" value="0" data-k="${s}"><b>0</b></div>`).join('') + `<input data-k="otrotxt" placeholder="Si marcaste Otro, ¿cuál?" style="margin-top:8px"><div class="src">ESAS-r. Edmonton. 0 nada, 10 lo peor posible. Apetito: 0 mejor, 10 peor. El puntaje sigue siendo entero.</div>`; },
+  esas(){
+    const pills = Array.from({length:11},(_,n)=>`<button type="button" class="pill${n===0?' on':''}" data-v="${n}" onclick="const i=this.parentElement.querySelector('input');i.value='${n}';i.dispatchEvent(new Event('input',{bubbles:true}))">${n}</button>`).join('');
+    return ['Dolor','Cansancio','Náuseas','Depresión','Ansiedad','Somnolencia','Apetito','Malestar','Falta de aire','Otro'].map(s=>`<div class="esas"><div class="esas-top"><span class="esas-name">${s}</span><b>0</b></div><div class="seg"><input class="seg-range" type="range" min="0" max="10" step="1" value="0" data-k="${s}">${pills}</div></div>`).join('') + `<input data-k="otrotxt" placeholder="Si marcaste Otro, ¿cuál?" style="margin-top:8px"><div class="src">ESAS-r. Edmonton. 0 nada, 10 lo peor posible. Apetito: 0 mejor, 10 peor. El puntaje sigue siendo entero.</div>`;
+  },
   dolor(){ return `
-    <div class="esas"><span>Intensidad ahora</span><input type="range" min="0" max="10" value="0" data-k="nrs"><b>0</b></div>
+    <div class="esas"><div class="esas-top"><span class="esas-name">Intensidad ahora</span><b>0</b></div><div class="seg"><input class="seg-range" type="range" min="0" max="10" value="0" data-k="nrs">${Array.from({length:11},(_,n)=>`<button type="button" class="pill${n===0?' on':''}" data-v="${n}" onclick="const i=this.parentElement.querySelector('input');i.value='${n}';i.dispatchEvent(new Event('input',{bubbles:true}))">${n}</button>`).join('')}</div></div>
     <p class="muted" style="margin:0 0 8px">Si ya marcaste dolor en el ESAS, este número se copia solo.</p>
     <b>Componente neuropático (entrevista)</b>
     ${['Quemazón','Frío doloroso','Descargas','Hormigueo','Pinchazos','Adormecimiento','Picazón'].map(t=>`<label class="opt"><input type="checkbox" data-k="${t}"> ${t}</label>`).join('')}
     <div class="src">Intensidad numérica. DN4, porción de entrevista (Bouhassira 2005): ≥3 de 7 sugiere componente neuropático. No reemplaza el examen.</div>`; },
-  rass(){ return [['4','Combativo'],['3','Muy agitado'],['2','Agitado'],['1','Inquieto'],['0','Alerta y tranquilo'],['-1','Somnoliento'],['-2','Sedación leve'],['-3','Sedación moderada'],['-4','Sedación profunda'],['-5','No despertable']].map(([v,t])=>`<label class="opt"><input type="radio" name="rass" value="${v}"> <b>${v}</b> ${t}</label>`).join('') + `<div class="src">Richmond Agitation-Sedation Scale. Sessler 2002.</div>`; },
+  rass(){ return `<div class="seg-wrap">`+[['4','Combativo'],['3','Muy agitado'],['2','Agitado'],['1','Inquieto'],['0','Alerta y tranquilo'],['-1','Somnoliento'],['-2','Sedación leve'],['-3','Sedación moderada'],['-4','Sedación profunda'],['-5','No despertable']].map(([v,t])=>`<label class="opt"><input type="radio" name="rass" value="${v}"> <b>${v}</b> ${t}</label>`).join('')+`</div><div class="src">Richmond Agitation-Sedation Scale. Sessler 2002.</div>`; },
   cam(){ return ['Inicio agudo o curso fluctuante','Inatención','Pensamiento desorganizado','Conciencia distinta de alerta'].map((t,i)=>`<label class="opt"><input type="checkbox" data-k="c${i}"> <b>${i+1}.</b> ${t}</label>`).join('') + `<div class="src">Inouye, 1990. Anexo 14 INC. Positivo si 1 y 2, más 3 o 4.</div>`; },
   mdas(){
     const items = [
@@ -797,7 +879,7 @@ const forms = {
       `<div class="src">Ítems: adaptación al español de Breitbart y cols., 1997. Rangos de severidad: clases latentes del MDAS-T en cuidados paliativos, Klankluang y cols., The Oncologist 2020 (PMC7011635): leve 9–13, moderado 14–18, severo 19–25, profundo 26–30. El corte diagnóstico de ese estudio fue 9. Acá, 0–6 es sin delirium y 7–9 se marca como sospecha, porque el corte del material INC es ≥7.</div>`;
   },
   mmse(){ return [['Orientación',10],['Registro',3],['Atención',5],['Recuerdo',3],['Lenguaje y praxia',9]].map(([t,m])=>`<label>${t} (0–${m})<input data-k="${t}" inputmode="numeric" placeholder="0–${m}"></label>`).join('') + `<label>Años de escolaridad<input data-k="esc" inputmode="numeric"></label><div class="src">Folstein 1975. Carga por dominio para usarla en vivo; el formulario licenciado sigue siendo el oficial. Cortes habituales 24–30 / 19–23 / 10–18 / ≤9, ajustar por escolaridad.</div>`; },
-  gds(){ return [1,2,3,4,5,6,7].map(n=>`<label class="opt"><input type="radio" name="gds" value="${n}"> <b>GDS ${n}.</b> ${['','Normalidad','Queja subjetiva','Déficit observable','Demencia leve','Demencia moderada','Demencia moderada-severa','Demencia grave'][n]}</label>`).join('') + `<div class="src">Reisberg 1982. Anexo 11 INC.</div>`; },
+  gds(){ return `<div class="seg-wrap">`+[1,2,3,4,5,6,7].map(n=>`<label class="opt"><input type="radio" name="gds" value="${n}"> <b>GDS ${n}.</b> ${['','Normalidad','Queja subjetiva','Déficit observable','Demencia leve','Demencia moderada','Demencia moderada-severa','Demencia grave'][n]}</label>`).join('')+`</div><div class="src">Reisberg 1982. Anexo 11 INC.</div>`; },
   zarit(){ return ['Pide más ayuda de la que necesita','No alcanza el tiempo','Estrés al convivir con el cuidado','Vergüenza o enojo','Impacto en otras relaciones','Miedo por el futuro','Dependencia total de usted','Salud propia resentida','Pérdida de control de la vida','Desear poder delegar','Inseguridad sobre qué hacer','Sensación de que debería hacer más'].map(t=>`<div class="grid2"><span>${t}</span><select data-k="${t}"><option value="">—</option><option value="0">Nunca</option><option value="1">Rara vez</option><option value="2">A veces</option><option value="3">Frecuente</option><option value="4">Casi siempre</option></select></div>`).join('') + `<div class="src">Zarit Burden Interview, forma breve de 12 ítems (Bédard 2001). Ítems parafraseados. Corte orientativo de carga alta ≥17.</div>`; },
   plan(){ return `
     <label>Representante<input data-k="rep" placeholder="nombre y vínculo, si se consignó"></label>
@@ -852,10 +934,16 @@ function collect(id, silent){
   const st = $('st-'+id);
   if(st){
     const open = root.closest('.scale')?.classList.contains('open');
-    st.textContent = txt ? 'listo' : (open ? 'cerrar' : 'abrir');
+    st.textContent = txt ? chipLabel(id, d) : (open ? 'cerrar' : 'abrir');
     st.classList.toggle('ready', !!txt);
   }
-  root.querySelectorAll('input[type=range]').forEach(n=>{ const b=n.nextElementSibling; if(b&&b.tagName==='B') b.textContent=n.value; n.style.setProperty('--p', ((Number(n.value)||0)/10*100)+'%'); });
+  root.querySelectorAll('input[type=range]').forEach(n=>{
+    const row = n.closest('.esas') || n.parentElement;
+    const b = row && row.querySelector('b');
+    if(b) b.textContent = n.value;
+    n.style.setProperty('--p', ((Number(n.value)||0)/10*100)+'%');
+    row && row.querySelectorAll('.pill').forEach(p=>p.classList.toggle('on', p.dataset.v===String(n.value)));
+  });
   if(id==='esas'){
     const dolor = $('bd-dolor');
     const slider = dolor && dolor.querySelector('[data-k=nrs]');
