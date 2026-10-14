@@ -47,47 +47,78 @@
   }
   button{cursor:pointer}
   header.app{
-    position:sticky;top:0;z-index:30;
-    background:color-mix(in srgb, var(--bg) 72%, transparent);
-    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-    display:flex;align-items:center;gap:12px;padding:12px 16px;
+    position:sticky;top:0;z-index:40;
+    background:var(--bg);
+    display:flex;align-items:center;gap:10px;padding:10px 16px;
+    border-bottom:1px solid var(--line);
   }
-  .logo{width:40px;height:40px;border-radius:14px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:600;font-size:14px;letter-spacing:-.03em;flex:0 0 auto}
-  header h1{margin:0;font-size:1.2rem;font-weight:600;letter-spacing:-.03em;line-height:1.2}
-  header p{margin:2px 0 0;color:var(--muted);font-size:.8125rem;font-weight:400}
+  .logo{width:36px;height:36px;border-radius:12px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:600;font-size:13px;letter-spacing:-.03em;flex:0 0 auto}
+  header h1{margin:0;font-size:22px;font-weight:600;letter-spacing:-.03em;line-height:1.1}
+  header .tag{margin:2px 0 0;color:var(--muted);font-size:13px;font-weight:400}
   .grow{flex:1}
-  .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .actions{display:flex;gap:8px;align-items:center;flex-wrap:nowrap}
   .btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;
-    padding:0 16px;min-height:48px;display:inline-flex;align-items:center;justify-content:center;
-    font-weight:600;font-size:.9375rem;white-space:nowrap;line-height:1.5;
-    box-shadow:var(--shadow);
+    padding:0 16px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    font-weight:600;font-size:15px;white-space:nowrap;line-height:1.2;
+    box-shadow:none;
   }
+  .btn svg{width:18px;height:18px;flex:0 0 auto}
   .btn:active{transform:scale(.98)}
-  .btn:focus-visible,.short:focus-visible,.mod:focus-visible,.scale-toggle:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  .btn:focus-visible,.short:focus-visible,.mod:focus-visible,.scale-toggle:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{
     outline:none;box-shadow:0 0 0 3px var(--ring);
   }
-  .btn-primary{background:var(--accent);color:var(--accent-ink);border-color:transparent;box-shadow:none}
-  .wrap{max-width:1120px;margin:0 auto;padding:8px 16px 168px}
+  .btn-primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+  .more{position:relative;margin:0}
+  .more summary{list-style:none;width:44px;min-width:44px;padding:0;color:var(--ink);font-weight:600}
+  .more summary::-webkit-details-marker{display:none}
+  .menu{
+    position:absolute;right:0;top:calc(100% + 8px);z-index:50;
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    box-shadow:var(--shadow);padding:6px;display:flex;flex-direction:column;min-width:190px;
+  }
+  .menu .btn{width:100%;justify-content:flex-start;border:0;background:transparent}
+  .wrap{max-width:1120px;margin:0 auto;padding:12px 16px 168px}
   .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:12px;box-shadow:var(--shadow)}
   h2{margin:0 0 8px;font-size:1.2rem;font-weight:600;letter-spacing:-.03em;line-height:1.25}
-  h2.section-title{margin:18px 4px 10px}
+  h2.section-title{margin:22px 0 12px;font-size:28px;font-weight:600;letter-spacing:-.03em;line-height:1.15}
   h3{margin:0 0 4px;font-size:1rem;font-weight:600}
   .kicker{font-size:.75rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600}
   .muted{color:var(--muted);font-weight:400}
   .meta-fields{display:flex;flex-direction:column;gap:2px}
   .meta-fields input,.meta-fields input[type=datetime-local]{width:100%;min-width:0}
-  .desk-side .actions{display:flex;flex-direction:column;align-items:stretch}
-  .desk-side .actions .btn{width:100%}
-  .plate figcaption{display:none}
-  .plate img{width:100%;height:200px;object-fit:cover;border-radius:16px;display:block}
-  .shortcuts{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
-  .short{
-    display:inline-flex;flex-direction:row;align-items:center;gap:8px;
-    text-align:left;width:auto;min-height:44px;border:1px solid var(--line);border-radius:999px;padding:8px 16px;
-    background:var(--surface);color:var(--ink);box-shadow:none;
+  .meta-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+  .meta-actions .btn{min-height:64px;min-width:96px;flex-direction:column;gap:4px;font-size:13px;font-weight:500;padding:8px 12px}
+  .visit-fold{padding:0}
+  .visit-fold > summary{
+    list-style:none;min-height:56px;display:flex;align-items:center;justify-content:space-between;
+    padding:16px 20px;color:var(--ink);font-weight:600;font-size:17px;cursor:pointer;
   }
-  .short b{font-size:.9375rem;font-weight:600}
-  .short span{display:none}
+  .visit-fold > summary::-webkit-details-marker{display:none}
+  .visit-fold > summary::after{
+    content:"";width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);
+    transform:rotate(45deg);margin:0 6px 4px 0;flex:0 0 auto;
+  }
+  .visit-fold[open] > summary{border-bottom:1px solid var(--line)}
+  .visit-fold[open] > summary::after{transform:rotate(-135deg);margin-top:6px}
+  #meta-card{padding:4px 20px 16px}
+  .plate{margin:0 0 12px}
+  .plate figcaption{display:none}
+  .plate-frame{position:relative;aspect-ratio:3/1;height:auto;min-height:0;border-radius:20px;overflow:hidden;background:var(--soft)}
+  .plate img{width:100%;height:100%;object-fit:cover;border-radius:20px;display:block}
+  .plate-fallback{display:none;height:100%;min-height:0;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--muted);background:var(--soft)}
+  .shortcuts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 8px}
+  .short{
+    display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:4px;
+    text-align:left;width:100%;min-height:128px;border:1px solid var(--line);border-radius:20px;padding:14px;
+    background:var(--surface);color:var(--ink);box-shadow:var(--shadow);
+  }
+  .short-ico{
+    width:36px;height:36px;border-radius:12px;display:grid;place-items:center;margin-bottom:6px;
+    background:color-mix(in srgb, var(--accent) 14%, var(--surface));color:var(--accent);
+  }
+  .short-ico svg{width:20px;height:20px;display:block}
+  .short b{font-size:17px;font-weight:600;line-height:1.2}
+  .short .sub{display:block;color:var(--muted);font-size:13px;font-weight:400;line-height:1.35}
   .short:active{transform:scale(.98)}
   .mods{display:grid;grid-template-columns:1fr;gap:12px}
   .mod{
@@ -119,23 +150,29 @@
   .mdas-item b{display:block;margin-bottom:4px}
   .mdas-how{margin:0 0 8px;font-weight:400}
   footer.sticky{
-    position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));
-    background:color-mix(in srgb, var(--surface) 78%, transparent);
-    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-    border-radius:22px;box-shadow:var(--shadow);
+    position:fixed;left:50%;transform:translateX(-50%);
+    width:min(720px, calc(100% - 24px));
+    bottom:calc(12px + env(safe-area-inset-bottom));
+    background:color-mix(in srgb, var(--surface) 94%, transparent);
+    border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);
     display:flex;gap:8px;align-items:center;
-    padding:8px 8px 8px 14px;z-index:30;
+    padding:8px 8px 8px 14px;z-index:35;
   }
-  footer.sticky .preview{flex:1;min-width:0;font-size:.875rem;font-weight:400;color:var(--preview);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:8px 0}
-  footer.sticky.open{align-items:stretch;flex-wrap:wrap;padding:12px}
-  footer.sticky.open .preview{white-space:pre-wrap;overflow:auto;max-height:34vh;flex-basis:100%;order:2}
-  .dock-expand{min-height:48px;min-width:48px;box-shadow:none;background:transparent}
-  .thumb{min-height:52px;min-width:112px;padding:0 18px;border-radius:16px;font-size:1rem}
+  footer.sticky .preview{
+    flex:1;min-width:0;font-size:15px;font-weight:400;color:var(--preview);line-height:1.35;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;padding:4px 0;
+  }
+  footer.sticky.open{flex-wrap:wrap;align-items:stretch;padding:14px;max-height:min(70vh, calc(100vh - 96px))}
+  footer.sticky.open .preview{
+    display:block;-webkit-line-clamp:unset;white-space:pre-wrap;overflow:auto;
+    max-height:46vh;flex-basis:100%;order:-1;
+  }
+  footer.sticky.open .thumb{flex:1}
+  .dock-expand{min-height:48px;min-width:72px;background:transparent}
+  .thumb{min-height:48px;min-width:112px;padding:0 18px;border-radius:16px;font-size:16px}
   .toast{position:fixed;left:50%;bottom:108px;transform:translateX(-50%);background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 16px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:40}
   .toast.on{opacity:1}
   .sec-copy{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
-  .plate-frame{position:relative;min-height:180px;border-radius:16px;overflow:hidden;background:var(--soft)}
-  .plate-fallback{display:none;min-height:180px;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--muted);background:var(--soft)}
   .plate-frame.failed img{display:none}
   .plate-frame.failed .plate-fallback{display:flex}
   .opt{
@@ -198,7 +235,7 @@
     box-shadow:0 2px 6px rgba(194,65,12,.2);
   }
   input[type=file]{-webkit-appearance:auto;appearance:auto;background:transparent;box-shadow:none;padding:0;line-height:1.5}
-  label{display:flex;flex-direction:column;gap:6px;margin:12px 0;font-size:.875rem;font-weight:600;color:var(--ink);line-height:1.5}
+  label{display:flex;flex-direction:column;gap:6px;margin:12px 0;font-size:15px;font-weight:500;color:var(--ink);line-height:1.5}
   label.opt{font-weight:400;font-size:1rem;margin:8px 0}
   .esas{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;margin:14px 0}
   .esas input[type=range]{order:1}
@@ -211,31 +248,23 @@
   .empty{border:0;border-radius:16px;padding:22px;background:var(--soft);color:var(--muted);font-weight:400}
   .navback{margin-bottom:12px}
   details{margin:8px 0}
-  details summary{cursor:pointer;color:var(--accent);font-weight:600;transition:color .2s cubic-bezier(.4,0,.2,1)}
+  details summary{cursor:pointer;color:var(--accent);font-weight:600}
+  details.more{margin:0}
+  .visit-fold > summary,.more summary{color:var(--ink)}
   @media (max-width:719px){
-    header.app{flex-wrap:wrap}
-    header.app .grow{display:none}
-    header.app .actions{width:100%}
-    header.app .actions .btn{flex:1 1 0;padding:0 8px;font-size:.8125rem;box-shadow:none;background:var(--surface)}
-    header.app .actions .btn-primary{background:var(--accent)}
+    header .tag{display:none}
+    header h1{font-size:20px}
   }
   @media (min-width:720px){
+    header h1{font-size:28px}
     .mods{grid-template-columns:1fr 1fr}
     .grid2{grid-template-columns:minmax(0,1fr) minmax(160px,240px)}
   }
   @media (min-width:980px){
-    .desk{display:grid;grid-template-columns:320px minmax(0,1fr);gap:20px;align-items:start}
-    .desk-side{position:sticky;top:76px}
-    .desk-side .plate img{height:220px}
-    .section-title{margin-top:0}
-    footer.sticky{
-      left:auto;right:24px;bottom:24px;width:340px;
-      flex-direction:column;align-items:stretch;padding:12px;
-      border:1px solid var(--line);
-    }
-    footer.sticky .preview{white-space:normal;overflow:auto;max-height:7.5em}
-    footer.sticky .thumb{width:100%}
-    .toast{left:auto;right:36px;transform:none}
+    .shortcuts{grid-template-columns:repeat(4, minmax(0,1fr))}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{transition:none !important;animation:none !important}
   }
   @media (prefers-color-scheme: dark){
     .warnbox{color:#f6e2b3}
@@ -261,58 +290,65 @@
 <body>
 <header class="app">
   <div class="logo">Pa</div>
-  <div>
+  <div class="brand">
     <h1>PALIAPP</h1>
-    <p>Consulta en vivo · texto listo para pegar en la historia clínica</p>
+    <p class="tag">Consulta en vivo · texto listo para pegar en la historia clínica</p>
   </div>
   <div class="grow"></div>
   <div class="actions">
-  <button class="btn" onclick="show('sources')">Fuentes</button>
-  <button class="btn" onclick="clearAll()">Limpiar visita</button>
-  <button class="btn btn-primary" onclick="showReport()">Texto para HC</button>
+    <button class="btn btn-primary" onclick="showReport()">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3.5h7l5 5V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.8"/><path d="M14 3.5V9h5.5M8 13h8M8 17h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      Texto HC
+    </button>
+    <details class="more">
+      <summary class="btn" aria-label="Más opciones">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></svg>
+      </summary>
+      <div class="menu">
+        <button class="btn" onclick="show('sources')">Fuentes</button>
+        <button class="btn" onclick="clearAll()">Limpiar visita</button>
+      </div>
+    </details>
   </div>
 </header>
 <div class="wrap" id="view-home">
-  <div class="desk">
-    <div class="desk-side">
-      <div class="card" id="meta-card"></div>
-      <div class="card">
-        <figure class="plate">
-          <div class="plate-frame" id="plate-frame">
-            <img id="plate-img" src="laminas/bandeja.jpg" alt="Viñeta de la situación, cambia con la función" onerror="plateFail()">
-            <div class="plate-fallback" aria-hidden="true">
-              <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true"><rect x="4" y="6" width="28" height="22" rx="3" stroke="#b86b62" stroke-width="1.6"/><path d="M8 22l6-6 4 4 3-3 7 7" stroke="#8eabc4" stroke-width="1.6" stroke-linejoin="round"/><circle cx="13" cy="13" r="2" fill="#e7b7b0"/></svg>
-              <span>Lámina no disponible</span>
-            </div>
-          </div>
-          <figcaption><p id="plate-cap" class="muted" style="margin:0"></p></figcaption>
-        </figure>
-      </div>
-      <div class="card">
-        <h2>Evaluación según tipo de visita</h2>
-        <p class="muted" style="margin:0 0 8px">Un atajo abre solo lo que suele hacer falta.</p>
-        <div class="shortcuts">
-          <button class="short" onclick="openVisit('primera')"><b>Primera vez</b><span>NECPAL, PPS, Barthel, ESAS, fase</span></button>
-          <button class="short" onclick="openVisit('control')"><b>Control</b><span>ESAS, fase y lo que cambió</span></button>
-          <button class="short" onclick="openVisit('delirium')"><b>Delirium</b><span>RASS, CAM y MDAS si positivo</span></button>
-          <button class="short" onclick="openVisit('techo')"><b>Techo terapéutico</b><span>PPS, PaP o PPI, planificación</span></button>
-        </div>
+  <figure class="plate">
+    <div class="plate-frame" id="plate-frame">
+      <img id="plate-img" src="laminas/bandeja.jpg" alt="Viñeta de la situación, cambia con la función" onerror="plateFail()">
+      <div class="plate-fallback" aria-hidden="true">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true"><rect x="4" y="6" width="28" height="22" rx="3" stroke="#b86b62" stroke-width="1.6"/><path d="M8 22l6-6 4 4 3-3 7 7" stroke="#8eabc4" stroke-width="1.6" stroke-linejoin="round"/><circle cx="13" cy="13" r="2" fill="#e7b7b0"/></svg>
+        <span>Lámina no disponible</span>
       </div>
     </div>
-    <div class="desk-main">
-      <h2 class="section-title">Escalas agrupadas por categorías</h2>
-      <div class="mods" id="modgrid"></div>
-      <div class="card" id="saved-card"></div>
-    </div>
+    <figcaption><p id="plate-cap" class="muted" style="margin:0"></p></figcaption>
+  </figure>
+  <div class="shortcuts">
+    <button class="short" onclick="openVisit('primera')"><span class="short-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="10" cy="8" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 19c.7-3 2.8-4.5 5.5-4.5S14.8 16 15.5 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M18 8v6M15 11h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><b>Primera vez</b><span class="sub">NECPAL, PPS, Barthel, ESAS, fase</span></button>
+    <button class="short" onclick="openVisit('control')"><span class="short-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M20 12a8 8 0 1 1-2.3-5.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M20 4.5V9h-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Control</b><span class="sub">ESAS, fase y lo que cambió</span></button>
+    <button class="short" onclick="openVisit('delirium')"><span class="short-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M8.5 14.5a3 3 0 0 1-.8-5.7A3.4 3.4 0 0 1 12 6.2a3.4 3.4 0 0 1 4.6 2.4 3 3 0 0 1-.6 5.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M9 14.5V17a3 3 0 0 0 6 0v-2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><b>Delirium</b><span class="sub">RASS, CAM y MDAS si positivo</span></button>
+    <button class="short" onclick="openVisit('techo')"><span class="short-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3.5l7 3v6c0 4.2-2.9 6.6-7 8.5-4.1-1.9-7-4.3-7-8.5v-6l7-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><b>Techo terapéutico</b><span class="sub">PPS, PaP o PPI, planificación</span></button>
   </div>
+  <h2 class="section-title">Escalas agrupadas por categorías</h2>
+  <div class="mods" id="modgrid"></div>
+  <details class="card visit-fold">
+    <summary>Datos de la visita</summary>
+    <div id="meta-card"></div>
+  </details>
+  <div class="card" id="saved-card"></div>
 </div>
 <div class="wrap hidden" id="view-mod"></div>
 <div class="wrap hidden" id="view-report"></div>
 <div class="wrap hidden" id="view-sources"></div>
 <footer class="sticky" id="dock">
-  <button type="button" class="btn dock-expand" id="dock-btn" aria-expanded="false" onclick="toggleDock()">Ver</button>
+  <button type="button" class="btn dock-expand" id="dock-btn" aria-expanded="false" onclick="toggleDock()">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 14l6-6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Ver</span>
+  </button>
   <div class="preview" id="live">Todavía no hay texto. Completá una escala.</div>
-  <button class="btn btn-primary thumb" onclick="copyReport()">Copiar</button>
+  <button class="btn btn-primary thumb" onclick="copyReport()">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M5 15V6a2 2 0 0 1 2-2h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    Copiar
+  </button>
 </footer>
 <div class="toast" id="toast">Copiado</div>
 <script>
@@ -390,16 +426,15 @@ function renderWarnings(){
 function renderMeta(){
   const m = loadMeta();
   const when = m.when || new Date().toISOString().slice(0,16);
-  $('meta-card').innerHTML = `<p class="kicker">Esta visita</p>
-    <div class="meta-fields">
+  $('meta-card').innerHTML = `<div class="meta-fields">
       <label>Fecha y hora<input id="meta-when" type="datetime-local" value="${esc(when)}"></label>
       <label>Identificador local<input id="meta-id" placeholder="cama, iniciales, no va al texto" value="${esc(m.localId||'')}"></label>
     </div>
     <label class="opt"><input id="meta-inc" type="checkbox" ${m.includeWhen?'checked':''}> Incluir fecha y hora en el texto</label>
-    <div class="actions">
-      <button type="button" class="btn" onclick="guardarVisita()">Guardar visita</button>
-      <button type="button" class="btn" onclick="exportar()">Exportar JSON</button>
-      <button type="button" class="btn" onclick="$('import-file').click()">Importar JSON</button>
+    <div class="meta-actions">
+      <button type="button" class="btn" onclick="guardarVisita()" aria-label="Guardar visita"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5.5h11l3 3V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6.5a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.8"/><path d="M8 5.5V9h6M8 19v-5h8v5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Guardar</button>
+      <button type="button" class="btn" onclick="exportar()" aria-label="Exportar JSON"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 19h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Exportar</button>
+      <button type="button" class="btn" onclick="$('import-file').click()" aria-label="Importar JSON"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 15V4M7 9l5-5 5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 19h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Importar</button>
       <input id="import-file" type="file" accept="application/json" class="hidden" onchange="importar(this)">
     </div>`;
   $('meta-card').querySelectorAll('input').forEach(n=>n.addEventListener('change', persistMeta));
@@ -1074,8 +1109,10 @@ function toast(msg){
 function toggleDock(){
   const dock = $('dock');
   const open = dock.classList.toggle('open');
-  $('dock-btn').setAttribute('aria-expanded', open?'true':'false');
-  $('dock-btn').textContent = open ? 'Ocultar' : 'Ver';
+  const btn = $('dock-btn');
+  btn.setAttribute('aria-expanded', open?'true':'false');
+  const label = btn.querySelector('span');
+  if(label) label.textContent = open ? 'Ocultar' : 'Ver';
 }
 function clearAll(){ if(!confirm('¿Borrar la visita de este navegador?')) return; localStorage.removeItem('cpdesk'); Object.keys(state).forEach(k=>delete state[k]); paintLive(); show('home'); }
 function renderSources(){
