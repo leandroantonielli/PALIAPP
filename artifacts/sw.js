@@ -1,4 +1,4 @@
-const CACHE = 'paliapp-v9';
+const CACHE = 'paliapp-v10';
 const FILES = ['./', './index.html', './manifest.json', './laminas/bandeja.jpg', './laminas/silla.jpg', './laminas/pasillo.jpg', './laminas/cama.jpg'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES)).then(() => self.skipWaiting()));
